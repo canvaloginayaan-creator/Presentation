@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Chapter 6 — Web Development | Class 9 Computer Science</title>
+<style>
+/* ============================================================
+   Chapter 6 · Web Development · Class 9 (Pakistan)
+   Single-file offline presentation. No external assets.
+   ============================================================ */
+:root{
+  --bg:#070a12;
+  --bg2:#0b1020;
+  --panel:#101827;
+  --panel2:#141e30;
+  --line:#24314a;
+  --line2:#31415f;
+  --txt:#e8eefc;
+  --dim:#9db0cf;
+  --dim2:#7488a8;
+  --cyan:#25d0e8;
+  --violet:#8b7cf6;
+  --pink:#f472b6;
+  --green:#34d399;
+  --amber:#fbbf24;
+  --red:#fb7185;
+  --grad:linear-gradient(90deg,#25d0e8,#8b7cf6,#f472b6);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  --rad:16px;
+  --sh:0 10px 30px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 620px at 12% -8%, rgba(37,208,232,.14), transparent 60%),
+    radial-gradient(900px 520px at 92% 4%, rgba(244,114,182,.12), transparent 60%),
+    radial-gradient(900px 620px at 50% 108%, rgba(139,124,246,.14), transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-text-size-adjust:100%;
+  padding-bottom:96px;
+  min-height:100vh;
+}
+h1,h2,h3,h4{margin:0 0 .35em;line-height:1.2;letter-spacing:-.01em}
+h2{font-size:1.42rem}
+h3{font-size:1.05rem}
+p{margin:.45em 0}
+small{font-size:.78rem}
+a{color:var(--cyan)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:#0a1220;border:1px solid var(--line);border-radius:6px;padding:.08em .38em;color:#bfe9f5}
+::selection{background:rgba(139,124,246,.45)}
+
+/* ---------- error bar + status badge ---------- */
+.errbar{
+  position:fixed;left:0;right:0;top:0;z-index:9999;
+  background:#7f1d1d;color:#fff;border-bottom:1px solid #ef4444;
+  font-family:var(--mono);font-size:.78rem;padding:8px 12px;
+  display:none;white-space:pre-wrap;word-break:break-word;max-height:38vh;overflow:auto;
+}
+.errbar.on{display:block}
+.errbar b{color:#fecaca}
+.badge{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.02em;
+  background:rgba(16,24,39,.92);color:var(--green);
+  border:1px solid #1f6b52;border-radius:999px;padding:4px 9px;
+  white-space:nowrap;
+}
+.badge.bad{color:#fecaca;border-color:#b91c1c;background:#4c0d0d}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:9px 14px;
+  background:rgba(7,10,18,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{
+  width:34px;height:34px;flex:0 0 34px;border-radius:10px;
+  background:var(--grad);color:#08101c;font-weight:800;font-size:.8rem;
+  display:grid;place-items:center;font-family:var(--mono);
+}
+.brand>div{min-width:0;overflow:hidden}
+.brand b{display:block;font-size:.92rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;color:var(--dim2);font-size:.68rem;line-height:1.2}
+.topright{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.pill{
+  font-family:var(--mono);font-size:.68rem;padding:5px 10px;border-radius:999px;
+  background:linear-gradient(#161f31,#111a2a);border:1px solid var(--line2);color:#cfe0ff;
+  white-space:nowrap;
+}
+.pill.term{background:linear-gradient(90deg,rgba(37,208,232,.2),rgba(244,114,182,.2));border-color:#3c4f74;color:#eaf4ff}
+.pill.ghost{color:var(--dim)}
+
+/* ---------- deck / slides ---------- */
+#deck{max-width:1080px;margin:0 auto;padding:18px 14px 10px}
+.slide{display:none;animation:fade .28s ease both}
+.slide.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.slidehead{margin-bottom:14px}
+.kicker{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cyan);display:inline-flex;align-items:center;gap:8px;margin-bottom:6px;
+}
+.kicker::before{content:"";width:22px;height:2px;background:var(--grad);border-radius:2px}
+.slidehead h2{font-size:1.5rem}
+.lead{color:var(--dim);font-size:.94rem;max-width:74ch}
+.defbox{
+  border:1px solid #2c3d59;border-left:3px solid var(--cyan);
+  background:linear-gradient(90deg,rgba(37,208,232,.10),rgba(16,24,39,.65));
+  border-radius:0 12px 12px 0;padding:10px 14px;margin:12px 0;
+}
+.defbox .lbl{
+  font-family:var(--mono);font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cyan);display:block;margin-bottom:3px;
+}
+.defbox p{margin:0;font-size:.95rem}
+.card{
+  background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);border-radius:var(--rad);
+  padding:14px;box-shadow:var(--sh);
+}
+.card h3{font-size:.98rem;display:flex;align-items:center;gap:8px}
+.card h3 .num{
+  font-family:var(--mono);font-size:.66rem;color:#08101c;background:var(--grad);
+  border-radius:6px;padding:2px 7px;font-weight:800;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid2>*,.grid3>*,.editorwrap>*,.searchgrid>*,.hostgrid>*,.hdr>*,.matchgrid>*,.termgrid>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.muted{color:var(--dim)}
+.tiny{font-size:.78rem}
+.mono-sm{font-family:var(--mono);font-size:.74rem}
+.hr{height:1px;background:var(--line);margin:12px 0;border:0}
+.note{
+  border:1px dashed #3a4a6b;border-radius:12px;padding:9px 12px;
+  background:rgba(139,124,246,.07);font-size:.84rem;color:#cbd8f2;
+}
+.note b{color:#e9e2ff}
+.trap{
+  border:1px solid #7a4a1c;border-left:3px solid var(--amber);border-radius:0 12px 12px 0;
+  background:linear-gradient(90deg,rgba(251,191,36,.12),rgba(16,24,39,.5));
+  padding:9px 13px;font-size:.86rem;
+}
+.trap b{color:#ffd97a}
+.ok{color:var(--green)}.warn{color:var(--amber)}.bad2{color:var(--red)}
+.gradtxt{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- buttons & chips ---------- */
+.btn{
+  appearance:none;font:inherit;font-size:.85rem;font-weight:600;
+  color:#eaf2ff;background:linear-gradient(#1b2739,#141d2c);
+  border:1px solid var(--line2);border-radius:11px;
+  padding:9px 14px;min-height:38px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;justify-content:center;
+  transition:transform .12s ease,background .15s ease,border-color .15s ease,box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover{background:linear-gradient(#243350,#182238);border-color:#4b5f86;transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.btn:active{transform:translateY(1px) scale(.985);background:#0f1626}
+.btn.primary{
+  background:var(--grad);color:#08101c;border:0;font-weight:800;
+  box-shadow:0 6px 18px rgba(139,124,246,.28);
+}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{font-size:.77rem;padding:7px 11px;min-height:34px;border-radius:9px}
+.btn.mono{font-family:var(--mono);font-size:.76rem}
+.chip{
+  font:inherit;font-size:.79rem;cursor:pointer;
+  background:#121c2c;border:1px solid var(--line2);color:#d5e2fa;
+  border-radius:999px;padding:7px 13px;min-height:36px;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:transform .12s,background .15s,border-color .15s,color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.chip:hover{background:#1a2a44;border-color:#51678f;color:#fff;transform:translateY(-1px)}
+.chip:active{transform:scale(.96)}
+.chip.on{background:linear-gradient(90deg,rgba(37,208,232,.25),rgba(139,124,246,.3));border-color:#5b74a8;color:#fff}
+.chip .dotled{width:7px;height:7px;border-radius:50%;background:var(--dim2)}
+
+/* ---------- cover ---------- */
+.cover{padding:26px 0 8px;text-align:left}
+.cover h1{font-size:clamp(1.9rem,5.4vw,3.05rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.2em}
+.cover .sub{font-size:clamp(.95rem,2.2vw,1.1rem);color:var(--dim);max-width:60ch}
+.cover .badges{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.cover .btns{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}
+.cover .btns .btn{font-size:.92rem;padding:12px 18px;min-height:46px}
+.contents{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:14px}
+.contents div{
+  font-size:.78rem;color:#c3d3ee;background:rgba(16,24,39,.7);
+  border:1px solid var(--line);border-radius:10px;padding:8px 10px;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.contents span{font-family:var(--mono);color:var(--violet);font-size:.7rem;padding-top:2px}
+
+/* ---------- term map ---------- */
+.termgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:6px}
+.termcard{
+  text-align:left;font:inherit;cursor:pointer;color:var(--txt);
+  background:linear-gradient(180deg,#152036,#0f1725);
+  border:1px solid var(--line2);border-radius:14px;padding:13px;
+  display:flex;flex-direction:column;gap:5px;min-height:104px;
+  transition:transform .14s,border-color .15s,box-shadow .15s,background .15s;
+  -webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;
+}
+.termcard::after{
+  content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--grad);opacity:.0;transition:opacity .2s;
+}
+.termcard:hover{transform:translateY(-3px);border-color:#5d76a5;box-shadow:0 12px 26px rgba(0,0,0,.45)}
+.termcard:hover::after{opacity:1}
+.termcard:active{transform:scale(.985)}
+.termcard .tn{font-family:var(--mono);font-size:.64rem;color:var(--cyan);letter-spacing:.1em}
+.termcard b{font-size:.92rem;line-height:1.25}
+.termcard small{color:var(--dim2);font-size:.73rem}
+.termcard .arrow{position:absolute;right:10px;bottom:8px;color:var(--dim2);font-size:.8rem}
+
+/* ---------- WWW diagram ---------- */
+.diagram{
+  position:relative;width:100%;aspect-ratio:16/9;height:auto;
+  background:
+    radial-gradient(600px 300px at 50% 40%, rgba(37,208,232,.09), transparent 70%),
+    repeating-linear-gradient(0deg,transparent 0 39px,rgba(49,65,95,.28) 39px 40px),
+    repeating-linear-gradient(90deg,transparent 0 39px,rgba(49,65,95,.28) 39px 40px),
+    #080d18;
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;
+}
+.diagram .wire{
+  position:absolute;height:1px;background:linear-gradient(90deg,rgba(139,124,246,.75),rgba(37,208,232,.75));
+  transform-origin:left center;pointer-events:none;opacity:.72;
+}
+.diagram .wire.lit{opacity:1;box-shadow:0 0 10px rgba(37,208,232,.7);height:2px}
+.node{
+  position:absolute;transform:translate(-50%,-50%);
+  font:inherit;font-size:.72rem;font-weight:700;cursor:pointer;
+  background:linear-gradient(#1a2740,#111a2b);color:#dceaff;
+  border:1px solid #46608c;border-radius:10px;padding:7px 9px;min-height:34px;
+  display:grid;place-items:center;text-align:center;line-height:1.15;
+  transition:transform .14s,border-color .15s,box-shadow .15s,background .15s;
+  z-index:2;-webkit-tap-highlight-color:transparent;white-space:nowrap;
+}
+.node:hover{transform:translate(-50%,-50%) scale(1.07);border-color:var(--cyan);box-shadow:0 0 0 3px rgba(37,208,232,.16)}
+.node:active{transform:translate(-50%,-50%) scale(.96)}
+.node.on{background:var(--grad);color:#07101d;border-color:transparent;box-shadow:0 0 0 4px rgba(244,114,182,.2)}
+.history{
+  font-family:var(--mono);font-size:.74rem;color:#bcd0ee;
+  background:#080e18;border:1px solid var(--line);border-radius:10px;
+  padding:8px 10px;min-height:36px;word-break:break-word;
+}
+.history .hop{color:var(--pink)}
+
+/* ---------- live editor ---------- */
+.editorwrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
+.pane{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pane .ptitle{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+}
+#code{
+  width:100%;height:326px;resize:vertical;
+  background:#07101c;color:#c9f0ff;border:1px solid var(--line2);border-radius:12px;
+  font-family:var(--mono);font-size:.76rem;line-height:1.5;padding:11px;
+  tab-size:2;outline:none;
+}
+#code:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(37,208,232,.14)}
+.pv-shell{
+  border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:#fff;
+  height:326px;display:flex;flex-direction:column;
+}
+.pv-bar{
+  background:#eef2f8;color:#33415c;font-family:var(--mono);font-size:.68rem;
+  padding:5px 9px;border-bottom:1px solid #cfd8e6;display:flex;gap:6px;align-items:center;
+}
+.pv-bar .tl{display:flex;gap:4px}
+.pv-bar i{width:8px;height:8px;border-radius:50%;background:#c8d2e0;display:block}
+.pv-bar i:nth-child(1){background:#f87171}
+.pv-bar i:nth-child(2){background:#fbbf24}
+.pv-bar i:nth-child(3){background:#34d399}
+.pv-root{
+  flex:1;overflow:auto;color:#101828;background:#fff;
+  font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:1.5;padding:12px;
+}
+.pv-root img{max-width:100%}
+.pvfs-btn{margin-left:auto;min-height:30px;padding:4px 9px;font-size:.68rem;letter-spacing:0;text-transform:none}
+.pvfs-exit{display:none;margin-left:auto;min-height:30px;padding:4px 10px;border:1px solid #cfd8e6;border-radius:8px;background:#fff;color:#33415c;font:inherit;font-size:.68rem;cursor:pointer}
+.pvfs-exit:hover{background:#dfe7f3}
+.pv-shell.pv-full{position:fixed;inset:0;z-index:9000;height:auto;width:auto;border-radius:0;border:0}
+.pv-shell.pv-full .pv-bar{font-size:.8rem;padding:8px 12px}
+.pv-shell.pv-full .pvfs-exit{display:inline-block}
+.pv-shell.pv-full .pv-root{font-size:17px;padding:20px 24px}
+body.pv-full-open{overflow:hidden}
+/* the slide entrance animation leaves a transform on the slide, which would trap the fixed overlay */
+body.pv-full-open .slide.active{animation:none;transform:none}
+.snippetbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.snippetbar .btn{font-family:var(--mono);font-size:.72rem;padding:6px 9px;min-height:36px}
+
+/* ---------- fake site pages (shared by slides 4, 8, 11) ---------- */
+.sitebox{
+  border:1px solid var(--line2);border-radius:13px;overflow:hidden;background:#fff;
+  color:#15213a;font-size:14px;line-height:1.5;
+  font-family:var(--sans);
+}
+.fakechrome{
+  display:flex;align-items:center;gap:6px;background:#e8edf6;border-bottom:1px solid #cbd5e4;
+  padding:6px 8px;
+}
+.fakechrome .lights{display:flex;gap:4px;margin-right:2px}
+.fakechrome .lights i{width:7px;height:7px;border-radius:50%;background:#c2ccdb;display:block}
+.fakechrome .lights i:nth-child(1){background:#f87171}
+.fakechrome .lights i:nth-child(2){background:#fbbf24}
+.fakechrome .lights i:nth-child(3){background:#34d399}
+.urlfield{
+  flex:1;min-width:0;background:#fff;border:1px solid #cbd5e4;border-radius:8px;
+  font-family:var(--mono);font-size:.72rem;color:#20314f;padding:5px 8px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.urlfield .u-dom{color:#0b6f8f;font-weight:700}
+.urlfield .u-path{color:#7a3fb3}
+.site-nav{
+  display:flex;flex-wrap:wrap;gap:4px;align-items:center;
+  background:#0d3b66;padding:8px 10px;
+}
+.site-nav .sname{color:#dff1ff;font-weight:800;font-size:.86rem;margin-right:8px;letter-spacing:.01em}
+.snav{
+  font:inherit;font-size:.76rem;font-weight:600;cursor:pointer;
+  background:rgba(255,255,255,.10);color:#eaf6ff;border:1px solid rgba(255,255,255,.22);
+  border-radius:8px;padding:6px 10px;min-height:36px;
+  transition:background .14s,transform .1s;font-family:var(--sans);
+  -webkit-tap-highlight-color:transparent;
+}
+.snav:hover{background:rgba(255,255,255,.22)}
+.snav:active{transform:scale(.96)}
+.snav.on{background:#fff;color:#0d3b66;border-color:#fff}
+.sitebody{padding:14px 16px;min-height:196px;background:#fff}
+.sitebody h3{font-size:1.15rem;color:#0d3b66;margin:0 0 6px}
+.sitebody p{color:#33415c;margin:.4em 0}
+.sitebody ul{margin:.4em 0 .4em 1.1em;padding:0;color:#33415c}
+.sitebody li{margin:.2em 0}
+.sitebody .box{
+  background:#f1f6fb;border:1px solid #d7e3f0;border-radius:10px;padding:9px 11px;margin:8px 0;
+  font-size:.84rem;color:#33415c;
+}
+.sitebody .herogrid{display:grid;grid-template-columns:1.1fr .9fr;gap:10px;align-items:center}
+.sitebody .thumb{
+  height:86px;border-radius:10px;background:linear-gradient(135deg,#0d3b66,#25a0c4);
+  display:grid;place-items:center;color:#eaf6ff;font-weight:800;font-size:.78rem;letter-spacing:.04em;
+}
+.slink{
+  color:#0b6f8f;text-decoration:underline;cursor:pointer;background:none;border:0;
+  font:inherit;padding:0;min-height:0;
+}
+.slink:hover{color:#7a3fb3}
+.slink:active{opacity:.6}
+.site-foot{
+  border-top:1px solid #e2e9f3;padding:7px 16px;font-size:.72rem;color:#7b8aa3;background:#f8fafd;
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
+}
+.pglist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.pglist li{
+  background:#f4f8fc;border:1px solid #dde7f2;border-radius:9px;padding:7px 10px;font-size:.82rem;
+}
+.errpage{text-align:center;padding:22px 10px}
+.errpage .big{font-size:2.4rem;font-weight:800;letter-spacing:-.02em;color:#b91c1c;line-height:1}
+.errpage .big.dns{color:#7a3fb3}
+.errpage p{font-size:.86rem;color:#33415c;max-width:46ch;margin:8px auto}
+.errpage code{background:#eef2f8;border-color:#d7e3f0;color:#7a3fb3}
+
+/* ---------- browser slide toolbar ---------- */
+.toolbar{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  background:linear-gradient(#162034,#101827);border:1px solid var(--line2);
+  border-radius:12px;padding:8px;
+}
+.tbtn{
+  font:inherit;font-size:.74rem;cursor:pointer;color:#dbe8ff;
+  background:#1a2438;border:1px solid var(--line2);border-radius:9px;
+  padding:7px 10px;min-height:36px;min-width:36px;
+  display:inline-flex;align-items:center;gap:5px;justify-content:center;
+  transition:background .14s,transform .1s,border-color .14s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tbtn:hover{background:#26344f;border-color:#5b74a8}
+.tbtn:active{transform:scale(.95)}
+.tbtn.on{background:linear-gradient(90deg,rgba(37,208,232,.28),rgba(139,124,246,.34));border-color:#6b86bb;color:#fff}
+.addrwrap{
+  flex:1;min-width:150px;display:flex;gap:6px;align-items:center;
+  background:#0a1220;border:1px solid var(--line2);border-radius:9px;padding:4px 8px;min-height:36px;
+}
+.addrwrap .lock{display:inline-flex;align-items:center;flex:0 0 auto}
+.addrwrap input{
+  flex:1;min-width:0;background:transparent;border:0;outline:none;color:#d7ecff;
+  font-family:var(--mono);font-size:.76rem;padding:4px 0;
+}
+.explain{
+  font-family:var(--mono);font-size:.75rem;color:#cfe4ff;
+  background:#0a1526;border:1px solid var(--line2);border-left:3px solid var(--violet);
+  border-radius:0 10px 10px 0;padding:8px 11px;min-height:36px;margin-top:10px;
+}
+.explain b{color:#e9e2ff}
+.paneLabel{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim2);
+  margin:10px 0 5px;
+}
+.sourceview{
+  font-family:var(--mono);font-size:.74rem;line-height:1.55;white-space:pre-wrap;word-break:break-word;
+  background:#071019;color:#a9e7c9;border:1px solid #1c3a2e;border-radius:10px;
+  padding:11px;max-height:300px;overflow:auto;
+}
+.sourceview .tg{color:#7fd6ff}
+.sourceview .at{color:#f7c987}
+.sourceview .st{color:#a9e7c9}
+
+/* ---------- URL parser ---------- */
+.urlseg{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.seg{
+  font-family:var(--mono);font-size:.82rem;font-weight:700;cursor:pointer;
+  border:1px solid var(--line2);border-radius:8px;padding:7px 9px;min-height:36px;
+  display:inline-flex;align-items:center;transition:transform .12s,box-shadow .14s,filter .14s;
+  -webkit-tap-highlight-color:transparent;color:#08101c;
+}
+.seg:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.4);filter:brightness(1.07)}
+.seg:active{transform:scale(.97)}
+.seg.on{outline:2px solid #fff;outline-offset:1px}
+.seg.scheme{background:#25d0e8}
+.seg.domain{background:#8b7cf6}
+.seg.port{background:#fbbf24}
+.seg.path{background:#34d399}
+.seg.query{background:#fb7185}
+.seg.frag{background:#c4b5fd}
+.seg.ghost{background:#1a2438;color:var(--dim);cursor:default;font-weight:500}
+.seg.ghost:hover{transform:none;box-shadow:none;filter:none}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.legend span{font-family:var(--mono);font-size:.7rem;color:var(--dim);display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:3px;display:block}
+.urlcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.ucard{
+  background:#0d1727;border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;
+  transition:border-color .14s,transform .12s;
+}
+.ucard:hover{border-color:#5b74a8;transform:translateY(-1px)}
+.ucard .k{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim2)}
+.ucard .v{font-family:var(--mono);font-size:.79rem;color:#d9ecff;word-break:break-all}
+.urlbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.urlbar input{
+  flex:1;min-width:180px;background:#0a1220;border:1px solid var(--line2);border-radius:10px;
+  color:#d7ecff;font-family:var(--mono);font-size:.82rem;padding:9px 11px;min-height:40px;outline:none;
+}
+.urlbar input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(37,208,232,.14)}
+.msg{font-size:.82rem;margin-top:8px;min-height:20px}
+.msg.badmsg{color:#fecaca}
+
+/* ---------- search engine ---------- */
+.searchgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px}
+.docs{display:grid;gap:6px;max-height:270px;overflow:auto;padding-right:2px}
+.doc{
+  border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:#0c1524;
+  font-size:.76rem;transition:border-color .2s,background .2s,transform .2s;
+}
+.doc b{display:block;font-size:.79rem;color:#dbe9ff}
+.doc small{color:var(--dim2);font-size:.71rem;display:block;line-height:1.35;margin-top:2px}
+.doc.crawled{border-color:#2f7d63;background:#0a1c1a}
+.doc .tick{color:var(--green);font-family:var(--mono);font-size:.68rem}
+.searchbox{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.searchbox input{
+  flex:1;min-width:150px;background:#0a1220;border:1px solid var(--line2);border-radius:10px;
+  color:#d7ecff;font-family:var(--mono);font-size:.84rem;padding:9px 11px;min-height:40px;outline:none;
+}
+.searchbox input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,124,246,.16)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:.72rem;color:var(--dim)}
+.stats b{color:var(--cyan)}
+.results{display:grid;gap:8px;margin-top:8px;max-height:300px;overflow:auto}
+.result{
+  border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;
+  padding:8px 10px;background:#0c1727;
+}
+.result .rtitle{font-size:.86rem;font-weight:700;color:#dcebff}
+.result .rsnip{font-size:.75rem;color:var(--dim);margin:2px 0 5px}
+.result .rrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bar{height:6px;border-radius:6px;background:#16233a;flex:1;min-width:70px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--grad);border-radius:6px;transition:width .4s ease}
+.score{font-family:var(--mono);font-size:.7rem;color:var(--amber)}
+.mchip{
+  font-family:var(--mono);font-size:.65rem;background:rgba(37,208,232,.14);color:#a8ecff;
+  border:1px solid rgba(37,208,232,.35);border-radius:999px;padding:2px 7px;
+}
+.rank{font-family:var(--mono);font-size:.68rem;color:#08101c;background:var(--grad);border-radius:6px;padding:1px 6px;font-weight:800}
+.empty{
+  text-align:center;padding:18px;border:1px dashed #4a3a52;border-radius:10px;
+  color:#f3c7d8;background:rgba(244,114,182,.06);font-size:.84rem;
+}
+
+/* ---------- hosting ---------- */
+.hostgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.machine{
+  border:1px solid var(--line2);border-radius:12px;background:#0b1422;padding:11px;
+}
+.machine .mtitle{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.files{display:grid;gap:5px;min-height:118px}
+.file{
+  display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.74rem;
+  background:#101c2e;border:1px solid var(--line);border-radius:8px;padding:6px 9px;
+  transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s,background .2s;
+}
+.file .ic{color:var(--cyan)}
+.file .sz{margin-left:auto;color:var(--dim2);font-size:.68rem}
+.file.going{transform:translateX(120%) scale(.9);opacity:0}
+.file.arrived{background:#0c1f1c;border-color:#2f7d63}
+.rack{
+  border:1px solid #2c3f5c;border-radius:10px;background:
+    repeating-linear-gradient(180deg,#0e1828 0 22px,#101c2d 22px 23px);
+  padding:8px;display:grid;gap:6px;min-height:118px;
+}
+.rackrow{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.66rem;color:var(--dim)}
+.led{width:8px;height:8px;border-radius:50%;background:#1f2c42;border:1px solid #2b3b57;flex:0 0 8px;transition:background .3s,box-shadow .3s}
+.led.on{background:var(--green);box-shadow:0 0 8px var(--green);border-color:transparent}
+.led.busy{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+.livebox{
+  margin-top:10px;border:1px solid #2f7d63;border-radius:10px;padding:9px 11px;
+  background:linear-gradient(90deg,rgba(52,211,153,.12),rgba(11,20,34,.6));font-size:.82rem;
+  display:none;
+}
+.livebox.on{display:block}
+.livebox .u{font-family:var(--mono);color:#a7f3d0;overflow-wrap:anywhere}
+
+/* ---------- web server / HTTP ---------- */
+.wirebox{
+  position:relative;height:64px;margin:10px 0 4px;border-radius:10px;
+  background:linear-gradient(90deg,rgba(37,208,232,.08),rgba(139,124,246,.10),rgba(244,114,182,.08));
+  border:1px solid var(--line);overflow:hidden;
+}
+.wirebox .pk{
+  position:absolute;top:50%;left:8%;transform:translate(-50%,-50%);
+  font-family:var(--mono);font-size:.62rem;padding:3px 7px;border-radius:6px;
+  background:var(--cyan);color:#07101c;font-weight:800;white-space:nowrap;
+  transition:left .85s cubic-bezier(.4,0,.2,1);
+}
+.wirebox .pk.back{background:var(--green)}
+.wirebox .ends{position:absolute;inset:auto 0 3px 0;display:flex;justify-content:space-between;padding:0 8px;font-family:var(--mono);font-size:.62rem;color:var(--dim2)}
+.wirebox .ends span{display:inline-flex;align-items:center;gap:5px}
+.wirebox .ends span::before{content:"";display:block;width:6px;height:6px;border-radius:2px;background:var(--cyan)}
+.wirebox .ends .endR::before{background:var(--violet)}
+.hdr{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.hdrbox{
+  font-family:var(--mono);font-size:.72rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+  background:#071019;border:1px solid var(--line2);border-radius:10px;padding:9px 11px;min-height:150px;
+}
+.hdrbox.req{border-color:#2b4a6b;color:#bfe6ff}
+.hdrbox.res{border-color:#2f7d63;color:#c8f5dd}
+.hdrbox .hl{color:#f7c987}
+.hdrbox .st200{color:#7ef0b8;font-weight:700}
+.hdrbox .st404{color:#fda4af;font-weight:700}
+.hdrbox .st500{color:#fda4af;font-weight:700}
+.hdrbox .st301{color:#fde68a;font-weight:700}
+.log{
+  font-family:var(--mono);font-size:.7rem;line-height:1.65;background:#050c14;
+  border:1px solid var(--line);border-radius:10px;padding:9px;max-height:150px;overflow:auto;color:#9fd7ff;
+}
+.log div{white-space:pre-wrap;word-break:break-word}
+.log .c2{color:#7ef0b8}.log .c4{color:#fda4af}.log .c3{color:#fde68a}.log .c5{color:#fda4af}
+.statustag{font-family:var(--mono);font-size:.72rem;padding:4px 9px;border-radius:999px;border:1px solid var(--line2);display:inline-flex;gap:6px;align-items:center}
+.statustag.g200{color:#7ef0b8;border-color:#2f7d63;background:rgba(52,211,153,.1)}
+.statustag.g404{color:#fda4af;border-color:#7a2f3a;background:rgba(251,113,133,.1)}
+.statustag.g301{color:#fde68a;border-color:#7a6526;background:rgba(251,191,36,.1)}
+.statustag.g500{color:#fda4af;border-color:#7a2f3a;background:rgba(251,113,133,.1)}
+
+/* ---------- quiz ---------- */
+.quizwrap{max-width:760px}
+.qmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.qdots{display:flex;gap:5px;flex-wrap:wrap}
+.qdots i{width:16px;height:6px;border-radius:4px;background:#22304a;display:block;transition:background .2s}
+.qdots i.done{background:var(--violet)}
+.qdots i.right{background:var(--green)}
+.qdots i.wrong{background:var(--red)}
+.qdots i.cur{background:var(--cyan);box-shadow:0 0 8px rgba(37,208,232,.7)}
+.qcard{background:linear-gradient(180deg,#152036,#0f1725);border:1px solid var(--line2);border-radius:14px;padding:16px}
+.qtext{font-size:1.02rem;font-weight:700;margin-bottom:10px}
+.qopt{
+  display:block;width:100%;text-align:left;font:inherit;font-size:.88rem;cursor:pointer;
+  background:#101c2e;border:1px solid var(--line2);border-radius:11px;color:#e6eefc;
+  padding:11px 13px;margin-bottom:8px;min-height:44px;
+  transition:background .15s,border-color .15s,transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.qopt:hover{background:#1a2a44;border-color:#5b74a8;transform:translateX(2px)}
+.qopt:active{transform:scale(.99)}
+.qopt .l{font-family:var(--mono);color:var(--cyan);margin-right:8px;font-weight:800}
+.qopt.right{background:rgba(52,211,153,.16);border-color:#2f7d63}
+.qopt.wrong{background:rgba(251,113,133,.14);border-color:#7a2f3a}
+.qopt:disabled{cursor:default;opacity:1}
+.qexplain{
+  margin-top:8px;border-left:3px solid var(--green);border-radius:0 10px 10px 0;
+  background:rgba(52,211,153,.1);padding:9px 12px;font-size:.85rem;display:none;
+}
+.qexplain.on{display:block}
+.qexplain.bad{border-color:var(--red);background:rgba(251,113,133,.1)}
+.scorebig{font-family:var(--mono);font-size:2.4rem;font-weight:800;line-height:1}
+.revisit{display:grid;gap:6px;margin-top:10px}
+.revisit div{background:rgba(251,113,133,.08);border:1px solid #7a2f3a;border-radius:9px;padding:7px 10px;font-size:.82rem}
+
+/* ---------- revision + match ---------- */
+.deflist{display:grid;gap:7px;counter-reset:d}
+.defitem{
+  display:grid;grid-template-columns:26px 1fr;gap:9px;align-items:start;
+  background:#0d1727;border:1px solid var(--line);border-radius:10px;padding:8px 10px;
+}
+.defitem .n{
+  font-family:var(--mono);font-size:.68rem;color:#08101c;background:var(--grad);
+  border-radius:6px;height:20px;display:grid;place-items:center;font-weight:800;
+}
+.defitem b{color:#e6f0ff}
+.defitem span{font-size:.83rem;color:#c6d5ee}
+.chain{
+  font-family:var(--mono);font-size:.78rem;line-height:2;
+  background:#07101c;border:1px solid var(--line2);border-radius:10px;padding:11px;overflow-x:auto;
+}
+.chain .node2{color:#a8ecff}
+.chain .eq{color:var(--pink);font-weight:800}
+.chain .arr{color:var(--dim2)}
+.matchgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mcol{display:grid;gap:6px}
+.mbtn{
+  font:inherit;font-size:.79rem;text-align:left;cursor:pointer;
+  background:#101c2e;border:1px solid var(--line2);border-radius:9px;color:#e2ecfc;
+  padding:8px 10px;min-height:38px;transition:background .15s,border-color .15s,transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.mbtn:hover{background:#1a2a44;border-color:#5b74a8}
+.mbtn:active{transform:scale(.985)}
+.mbtn.sel{background:rgba(37,208,232,.2);border-color:var(--cyan)}
+.mbtn.done{background:rgba(52,211,153,.13);border-color:#2f7d63;color:#b7f2d6;cursor:default}
+.mbtn.shake{animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.mstat{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:.74rem;color:var(--dim)}
+.mstat b{color:var(--cyan)}
+.btn.activeReq{background:var(--grad);color:#08101c;border:0;font-weight:800}
+.mcolhead{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim2);margin-bottom:2px}
+
+/* ---------- bottom nav ---------- */
+.navbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;
+  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));
+  background:rgba(8,12,20,.94);border-top:1px solid var(--line);
+  backdrop-filter:blur(12px);
+}
+.navbar .btn{min-height:42px}
+#dots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;flex:1;min-width:0}
+#dots button{
+  position:relative;
+  width:11px;height:11px;padding:0;border-radius:50%;cursor:pointer;
+  background:#26374f;border:1px solid #33465f;transition:transform .15s,background .2s,box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+#dots button::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:24px;height:34px;background:transparent;border-radius:6px}
+#dots button:hover{background:#4d6a90;transform:scale(1.25)}
+#dots button:active{transform:scale(.9)}
+#dots button.on{background:var(--grad);border-color:transparent;box-shadow:0 0 10px rgba(139,124,246,.6);transform:scale(1.3)}
+.counter{font-family:var(--mono);font-size:.76rem;color:var(--dim);white-space:nowrap;min-width:56px;text-align:center}
+
+/* ---------- responsive ---------- */
+@media (max-width:820px){
+  body{font-size:14.5px;padding-bottom:104px}
+  #deck{padding:14px 11px 6px}
+  .grid2,.grid3,.editorwrap,.searchgrid,.hostgrid,.hdr,.matchgrid,.termgrid{grid-template-columns:1fr}
+  .termgrid{grid-template-columns:1fr 1fr}
+  .slidehead h2{font-size:1.24rem}
+  .diagram{aspect-ratio:16/9}
+  .node{font-size:.66rem;padding:6px 7px}
+  #code,.pv-shell{height:260px}
+  .topbar{padding:7px 10px}
+  .brand small{display:none}
+  .badge{font-size:.58rem;padding:3px 7px}
+  #dots{gap:3px;flex-wrap:nowrap}
+  #dots button{width:9px;height:9px}
+  #dots button::after{width:20px;height:32px}
+  .navbar .btn{padding:8px 11px;font-size:.8rem}
+  .counter{min-width:44px;font-size:.7rem}
+  .sitebody .herogrid{grid-template-columns:1fr}
+  .cover h1{font-size:1.85rem}
+}
+@media (max-width:520px){
+  .termgrid{grid-template-columns:1fr}
+  .pill.ghost{display:none}
+  .topbar{gap:6px;padding:7px 8px;overflow:hidden}
+  .brand{gap:7px}
+  .brand b{font-size:.76rem;max-width:30vw}
+  .pill{font-size:.6rem;padding:4px 7px}
+  .pill.term{font-size:.62rem}
+  .badge{font-size:.55rem;padding:3px 6px}
+  .logo{width:30px;height:30px;flex:0 0 30px;font-size:.72rem}
+}
+
+/* ---------- print ---------- */
+@media print{
+  .pv-shell.pv-full{position:static;height:326px}
+  .pvfs-btn,.pvfs-exit{display:none!important}
+  @page{size:A4;margin:9mm}
+  html,body{
+    background:#070a12 !important;
+    color:#e8eefc !important;
+    padding:0 !important;
+    min-height:0 !important;
+    font-size:9.6pt;
+  }
+  *,*::before,*::after{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+  /* hide everything that is only useful on screen */
+  .topbar,.navbar,.badge,.errbar,#dots{display:none !important}
+  #deck{max-width:none;padding:0}
+  /* one slide per printed page. animation:none is essential:
+     Chromium prints composited (animated) layers as blank pages. */
+  .slide{
+    display:block !important;
+    animation:none !important;
+    transform:none !important;
+    page-break-after:always;
+    break-after:page;
+    page-break-inside:avoid;
+    margin:0 0 6mm 0;
+    padding:0;
+  }
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .slidehead h2{font-size:14pt}
+  .kicker{font-size:7.5pt}
+  .lead,.muted,.tiny{font-size:9pt}
+  .defbox,.card,.termcard,.note,.trap,.qcard,.mbtn,.hdrbox,.log,.sourceview,.chain,
+  .file,.rack,.sitebox,.diagram,.toolbar,.explain,.ucard,.result,.machine,.defitem,
+  .seg,.livebox,.qopt,.doc,.urlfield,.sourceview{box-shadow:none !important}
+  #code{height:210px}
+  .pv-shell{height:210px}
+  .diagram{aspect-ratio:16/9 !important;height:auto !important;min-height:0 !important}
+  .sitebox{page-break-inside:avoid}
+  a{color:#7cd8ee !important}
+  /* the revision slide is the longest one: squeeze it onto a single page */
+  .slide[data-i="13"] .slidehead{margin-bottom:4px}
+  .slide[data-i="13"] .lead,.slide[data-i="13"] .muted{font-size:8pt}
+  .slide[data-i="13"] .defitem{padding:2px 7px}
+  .slide[data-i="13"] .deflist{gap:2px}
+  .slide[data-i="13"] .defitem b{font-size:8.6pt}
+  .slide[data-i="13"] .defitem span{font-size:7.6pt;line-height:1.3}
+  .slide[data-i="13"] .chain{font-size:7.4pt;line-height:1.45;padding:6px}
+  .slide[data-i="13"] .chain+p{display:none}
+  .slide[data-i="13"] .card{padding:7px;margin-top:5px !important}
+  .slide[data-i="13"] .card h3{font-size:9pt;margin-bottom:2px}
+  .slide[data-i="13"] .mbtn{padding:2px 7px;min-height:20px;font-size:7.6pt}
+  .slide[data-i="13"] .mcol{gap:2px}
+  .slide[data-i="13"] .mstat{margin:4px 0 !important;font-size:7.6pt}
+  .matchgrid{grid-template-columns:1fr 1fr !important}
+</style>
+</head>
+<body>
+<div id="errbar" class="errbar" role="alert" aria-live="assertive"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">C6</span>
+    <div>
+      <b>Ch 6 · Web Development</b>
+      <small>Class 9 Computer Science · Pakistan</small>
+    </div>
+  </div>
+  <div class="topright">
+    <span id="termpill" class="pill term">Term — of 9</span>
+    <span id="progresspill" class="pill ghost">1 / 14</span>
+    <span id="badge" class="badge" title="JavaScript health">JS starting…</span>
+  </div>
+</header>
+<main id="deck">
+
+  <!-- ======================= SLIDE 0 · COVER ======================= -->
+  <section class="slide" data-i="0" aria-label="Cover">
+    <div class="cover">
+      <div class="kicker">Chapter 6 · Class 9 Computer Science</div>
+      <h1><span class="gradtxt">Web Development</span></h1>
+      <p class="sub">From a single web page to a full website — the 9 words your exam asks about, explained with
+      live demos you can tap, type and break. Simple English, real examples, no internet needed.</p>
+      <div class="badges">
+        <span class="pill">14 slides</span>
+        <span class="pill">9 exam definitions</span>
+        <span class="pill">6 live labs</span>
+        <span class="pill">10-question quiz</span>
+        <span class="pill">works offline</span>
+      </div>
+      <div class="btns">
+        <button class="btn primary" data-go="1">Start the lesson →</button>
+        <button class="btn" data-go="11">Browser lab</button>
+        <button class="btn" data-go="12">Quiz</button>
+      </div>
+      <div class="contents">
+        <div><span>01</span> Term map – tap any of the 9 words</div>
+        <div><span>02</span> World Wide Web – hyperlink network</div>
+        <div><span>03</span> Web page – write real HTML live</div>
+        <div><span>04</span> Website – 4 pages, 1 website</div>
+        <div><span>05</span> Web browser – every button explained</div>
+        <div><span>06</span> URL – real address parser</div>
+        <div><span>07</span> Search engine – real ranking with scores</div>
+        <div><span>08</span> Home page – type a domain, see it open</div>
+        <div><span>09</span> Web hosting – upload files, site goes live</div>
+        <div><span>10</span> Web server – real HTTP headers + status codes</div>
+        <div><span>11</span> Browser lab – 4 sites, DNS error, 404</div>
+        <div><span>12</span> Quiz – 10 questions with explanations</div>
+        <div><span>13</span> Revision – all definitions + matching game</div>
+      </div>
+      <p class="tiny muted" style="margin-top:16px">Tip: use the ← and → arrow keys, or the bar at the bottom, to move.</p>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 1 · TERM MAP ======================= -->
+  <section class="slide" data-i="1" aria-label="Term map">
+    <div class="slidehead">
+      <div class="kicker">Slide 1 · Map of the chapter</div>
+      <h2>The 9 words that make up this chapter</h2>
+      <p class="lead">Tap any card to jump straight to its slide. Every card has an exam-ready one-line definition.</p>
+    </div>
+    <div class="termgrid">
+      <button class="termcard" data-go="2"><span class="tn">TERM 1</span><b>World Wide Web</b><small>All the linked pages on the internet</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="3"><span class="tn">TERM 2</span><b>Web Page</b><small>One document written in HTML</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="4"><span class="tn">TERM 3</span><b>Website</b><small>Related pages, one domain name</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="5"><span class="tn">TERM 4</span><b>Web Browser</b><small>Software that shows you the page</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="6"><span class="tn">TERM 5</span><b>URL</b><small>The full address of a resource</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="7"><span class="tn">TERM 6</span><b>Search Engine</b><small>Searches an index, best result first</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="8"><span class="tn">TERM 7</span><b>Home Page</b><small>First page, usually index.html</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="9"><span class="tn">TERM 8</span><b>Web Hosting</b><small>Keeps a site online 24 hours a day</small><span class="arrow">→</span></button>
+      <button class="termcard" data-go="10"><span class="tn">TERM 9</span><b>Web Server</b><small>Sends pages over HTTP + status code</small><span class="arrow">→</span></button>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="trap"><b>Exam trap 1:</b> Web ≠ Internet. The internet is the <b>hardware</b> (cables, routers, phones).
+      The web is a <b>service that runs on top</b> of it — like traffic on a road. No road, no traffic.</div>
+      <div class="trap"><b>Exam trap 2:</b> Web page ≠ Website. One page is a page; a <b>group</b> of linked pages
+      with one domain name is a website. A book page vs. the whole book.</div>
+    </div>
+    <div class="note" style="margin-top:10px"><b>Exam trap 3:</b> A web server is the <b>computer/software</b> that stores and
+    sends pages. Web hosting is the <b>service</b> a company sells you to keep your files on that server, online 24/7.</div>
+  </section>
+
+  <!-- ======================= SLIDE 2 · WWW ======================= -->
+  <section class="slide" data-i="2" aria-label="World Wide Web">
+    <div class="slidehead">
+      <div class="kicker">Term 1 of 9</div>
+      <h2>World Wide Web</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>A worldwide collection of interlinked web pages stored on web servers and accessed through the internet using a web browser.</p>
+    </div>
+    <div class="grid2" style="align-items:start">
+      <div>
+        <div class="diagram" id="wwwDiagram">
+          <div class="wires" id="wwwWires"></div>
+          <!-- nodes are positioned by CSS inline % values; links are 1px rotated divs built in JS -->
+          <button class="node" data-node="home"  style="left:17%;top:28%">Home</button>
+          <button class="node" data-node="about" style="left:45%;top:13%">About</button>
+          <button class="node" data-node="contact" style="left:76%;top:26%">Contact</button>
+          <button class="node" data-node="gallery" style="left:28%;top:60%">Gallery</button>
+          <button class="node" data-node="news"  style="left:57%;top:52%">News</button>
+          <button class="node" data-node="blog"  style="left:82%;top:63%">Blog</button>
+          <button class="node" data-node="help"  style="left:50%;top:86%">Help</button>
+        </div>
+        <p class="tiny muted" style="margin-top:6px">Each line is a <b>hyperlink</b>. Tap a page to "follow" it.</p>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3><span class="num">INFO</span> <span id="wwwNodeTitle">Pick a page</span></h3>
+          <p class="tiny" id="wwwNodeFact" style="min-height:64px;color:#c6d5ee">Tap any page in the diagram to see what it does and how it is linked to other pages.</p>
+          <div class="history" id="wwwHistory">history: <span class="hop">0 hops</span></div>
+        </div>
+        <div class="row" style="margin-bottom:8px">
+          <button class="chip" id="tglNet">Internet vs Web</button>
+          <button class="chip" id="tglTime">Timeline 1969 → 1991</button>
+        </div>
+        <div class="card" id="panelNet" style="display:none">
+          <h3><span class="num">≠</span> Internet vs Web</h3>
+          <p class="tiny"><b>Internet</b> = the global network of computers and cables. It carries email, WhatsApp, games and the web.</p>
+          <p class="tiny"><b>World Wide Web</b> = one service that uses that network: pages written in HTML and joined by hyperlinks.</p>
+          <p class="tiny muted">So the web needs the internet, but the internet is not only the web.</p>
+        </div>
+        <div class="card" id="panelTime" style="display:none">
+          <h3><span class="num">1969–91</span> How the web was born</h3>
+          <ul class="tiny" style="margin:6px 0 0 16px;padding:0;color:#c6d5ee">
+            <li><b>1969</b> — ARPANET connects 4 computers. The internet starts.</li>
+            <li><b>1983</b> — TCP/IP becomes the standard: computers can talk to each other.</li>
+            <li><b>1989</b> — Tim Berners-Lee (CERN) proposes the World Wide Web.</li>
+            <li><b>1990–91</b> — He writes the first browser, the first web server and HTML.</li>
+            <li><b>1993</b> — Mosaic browser makes the web easy for everyone.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 3 · WEB PAGE ======================= -->
+  <section class="slide" data-i="3" aria-label="Web page">
+    <div class="slidehead">
+      <div class="kicker">Term 2 of 9</div>
+      <h2>Web Page — write real HTML, see it live</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>A single document written in HTML that can contain text, images, audio, video and hyperlinks, is stored on a web server and has its own URL.</p>
+    </div>
+    <div class="snippetbar">
+      <button class="btn sm mono" data-ins="h1">&lt;h1&gt;</button>
+      <button class="btn sm mono" data-ins="p">&lt;p&gt;</button>
+      <button class="btn sm mono" data-ins="b">&lt;b&gt;</button>
+      <button class="btn sm mono" data-ins="ul">&lt;ul&gt;</button>
+      <button class="btn sm mono" data-ins="table">&lt;table&gt;</button>
+      <button class="btn sm mono" data-ins="a">&lt;a&gt;</button>
+      <button class="btn sm mono" data-ins="img">&lt;img&gt;</button>
+      <button class="btn sm" id="edBig">Bigger example</button>
+      <button class="btn sm" id="edReset">Reset</button>
+      <span class="pill ghost" id="renderBadge" style="margin-left:auto">render – ms</span>
+    </div>
+    <div class="editorwrap">
+      <div class="pane">
+        <div class="ptitle"><span>index.html — type here</span><span>HTML + CSS</span></div>
+        <textarea id="code" spellcheck="false" aria-label="HTML code editor"></textarea>
+      </div>
+      <div class="pane">
+        <div class="ptitle"><span>Your page (live preview)</span><span id="pvSize">—</span><button class="btn sm pvfs-btn" id="pvFull" type="button" title="Show the output full screen (Esc to exit)">&#x26F6; Full screen</button></div>
+        <div class="pv-shell">
+          <div class="pv-bar"><span class="tl"><i></i><i></i><i></i></span><span id="pvUrl">https://mysite.com/index.html</span><button class="pvfs-exit" id="pvExit" type="button" title="Exit full screen (Esc)">&#x2715; Exit full screen</button></div>
+          <div class="pv-root" id="preview"></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>What you just did:</b> you wrote the <b>source code</b> of a web page. The browser is the translator —
+      it reads your HTML and <b>renders</b> (draws) it. Press "view source" in a real browser and you see the code again.</div>
+      <div class="trap tiny"><b>Remember:</b> HTML gives <b>structure</b> (heading, paragraph, list, table), CSS gives <b>style</b>
+      (colour, size). A page with no CSS is still a page — just plain.</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 4 · WEBSITE ======================= -->
+  <section class="slide" data-i="4" aria-label="Website">
+    <div class="slidehead">
+      <div class="kicker">Term 3 of 9</div>
+      <h2>Website — 4 pages, but only 1 website</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>A collection of related web pages that share one domain name, are stored on the same web server and are joined by hyperlinks.</p>
+    </div>
+    <div class="grid2" style="align-items:start">
+      <div>
+        <div class="sitebox" id="site4"></div>
+        <p class="tiny muted" style="margin-top:6px">Tap the menu <b>inside</b> the page — the URL bar changes, but the domain name stays the same.</p>
+      </div>
+      <div>
+        <div class="card">
+          <h3><span class="num">4 → 1</span> Why 4 pages are 1 website</h3>
+          <ul class="tiny" style="margin:6px 0 0 16px;padding:0;color:#c6d5ee">
+            <li><b>Same domain:</b> every page starts with <code>www.school.edu.pk</code></li>
+            <li><b>Same server:</b> all 4 files sit in one folder on one web server</li>
+            <li><b>Linked:</b> the menu uses hyperlinks, so you can move between pages</li>
+            <li><b>Related:</b> all 4 pages are about the same school</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-top:10px">
+          <h3><span class="num">PATH</span> One domain, different files</h3>
+          <div class="mono-sm" style="display:grid;gap:4px;color:#c6d5ee">
+            <div>www.school.edu.pk<b class="ok">/index.html</b> &nbsp;<span class="muted">← home page</span></div>
+            <div>www.school.edu.pk<b class="ok">/about.html</b></div>
+            <div>www.school.edu.pk<b class="ok">/academics.html</b></div>
+            <div>www.school.edu.pk<b class="ok">/contact.html</b></div>
+          </div>
+          <p class="tiny muted" style="margin-top:8px">Only the <b>path</b> changes. That is why it is one website, not four.</p>
+        </div>
+        <div class="trap tiny" style="margin-top:10px"><b>Exam trap:</b> "Web page" = one file. "Website" = the whole set of files under one domain.
+        If a question says "a collection of related web pages", the answer is <b>website</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 5 · WEB BROWSER ======================= -->
+  <section class="slide" data-i="5" aria-label="Web browser">
+    <div class="slidehead">
+      <div class="kicker">Term 4 of 9</div>
+      <h2>Web Browser — every button explained</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>Application software that requests web pages from servers, reads the HTML and renders the page on the user's screen.</p>
+    </div>
+    <div class="toolbar" style="margin-bottom:10px">
+      <button class="tbtn" data-bt="back">← Back</button>
+      <button class="tbtn" data-bt="forward">Forward →</button>
+      <button class="tbtn" data-bt="reload">⟳ Reload</button>
+      <button class="tbtn" data-bt="home">⌂ Home</button>
+      <div class="addrwrap">
+        <span class="lock" aria-hidden="true"><svg width="10" height="12" viewBox="0 0 10 12"><path d="M2.2 5.2V3.6a2.8 2.8 0 0 1 5.6 0v1.6" fill="none" stroke="#34d399" stroke-width="1.2"/><rect x=".6" y="5.1" width="8.8" height="6.4" rx="1.5" fill="#34d399"/></svg></span>
+        <input id="brAddr" readonly value="https://www.school.edu.pk/index.html" aria-label="Address bar">
+      </div>
+      <button class="tbtn" data-bt="source" title="View source">&lt;/&gt;</button>
+      <button class="tbtn" data-bt="bookmark">☆ Bookmark</button>
+    </div>
+    <div class="sitebox" id="brPage" style="margin-bottom:10px"></div>
+    <div class="explain" id="brExplain">Tap any button above, or click a link inside the page, to learn what it really does.</div>
+    <div class="paneLabel" id="brSrcLabel" style="display:none">View source — the raw HTML the server sent</div>
+    <div class="sourceview" id="brSource" style="display:none"></div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>Browser ≠ search engine.</b> Chrome, Firefox and Edge are <b>browsers</b>. Google, Bing and Yahoo
+      are <b>search engines</b> — websites you open <i>inside</i> a browser.</div>
+      <div class="trap tiny"><b>Four jobs of a browser:</b> 1) send an HTTP request 2) receive the HTML 3) read (parse) it
+      4) render it on screen.</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 6 · URL ======================= -->
+  <section class="slide" data-i="6" aria-label="URL">
+    <div class="slidehead">
+      <div class="kicker">Term 5 of 9</div>
+      <h2>URL — the exact address of a resource</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>The unique address of a resource on the web: protocol + domain name + path + file name.</p>
+    </div>
+    <div class="urlbar">
+      <input id="urlIn" value="https://www.school.edu.pk:443/exams/result.html?class=9&amp;subject=cs#top" spellcheck="false" aria-label="URL input">
+      <button class="btn primary" id="urlParse">Parse URL</button>
+      <button class="btn sm" id="urlAlt">Try one without https://</button>
+    </div>
+    <div class="urlseg" id="urlSeg"><span class="seg ghost">Type a URL and press Parse</span></div>
+    <div class="legend">
+      <span><i style="background:#25d0e8"></i>protocol</span>
+      <span><i style="background:#8b7cf6"></i>domain</span>
+      <span><i style="background:#fbbf24"></i>port</span>
+      <span><i style="background:#34d399"></i>path</span>
+      <span><i style="background:#fb7185"></i>query string</span>
+      <span><i style="background:#c4b5fd"></i>fragment</span>
+    </div>
+    <p class="msg" id="urlMsg"></p>
+    <div class="urlcards" id="urlCards"></div>
+    <div class="card" style="margin-top:12px">
+      <h3><span class="num">TAP</span> <span id="urlPartTitle">What the parts mean</span></h3>
+      <p class="tiny" id="urlPartText" style="min-height:52px;color:#c6d5ee">Tap any coloured segment or any value card above to see what that part does.</p>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>How to read a URL out loud:</b> protocol tells <i>how</i> to fetch, domain tells <i>which computer</i>,
+      path tells <i>which folder</i>, file name tells <i>which file</i>.</div>
+      <div class="trap tiny"><b>Exam trap:</b> <code>https://</code> is the <b>protocol</b>, not part of the domain name.
+      And <code>www</code> is just a common sub-domain — <code>school.edu.pk</code> works too.</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 7 · SEARCH ENGINE ======================= -->
+  <section class="slide" data-i="7" aria-label="Search engine">
+    <div class="slidehead">
+      <div class="kicker">Term 6 of 9</div>
+      <h2>Search Engine — crawl, index, then rank</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>A program/website that searches an index of web pages collected by crawlers and lists the most relevant results first.</p>
+    </div>
+    <div class="searchgrid">
+      <div class="card">
+        <h3><span class="num">1</span> Crawl &amp; build the index</h3>
+        <p class="tiny muted">A crawler visits pages and records every word. The result is an <b>inverted index</b>: word → list of pages.</p>
+        <div class="row" style="margin-bottom:8px">
+          <button class="btn primary sm" id="crawlBtn">Crawl 9 pages</button>
+          <button class="btn sm" id="crawlReset">Clear index</button>
+        </div>
+        <div class="docs" id="docList"></div>
+        <div class="stats" id="sStats" style="margin-top:9px">
+          <span>docs <b id="stDocs">0</b></span>
+          <span>unique terms <b id="stTerms">0</b></span>
+          <span>postings <b id="stPost">0</b></span>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="num">2</span> Search it with real scoring</h3>
+        <div class="searchbox">
+          <input id="qIn" placeholder="e.g. web server" spellcheck="false" aria-label="Search query">
+          <button class="btn primary" id="qGo">Search</button>
+        </div>
+        <div class="row" style="margin-bottom:6px">
+          <button class="chip" data-q="web server">web server</button>
+          <button class="chip" data-q="html">html</button>
+          <button class="chip" data-q="browser">browser</button>
+          <button class="chip" data-q="hosting live">hosting live</button>
+          <button class="chip" data-q="pizza">pizza</button>
+        </div>
+        <p class="tiny mono-sm muted" style="margin:4px 0">score = (1 + log tf) × log(1 + N/df)</p>
+        <div class="results" id="results">
+          <div class="empty">Press <b>Crawl 9 pages</b> first, then search.</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>Why "pizza" returns nothing:</b> the index has no posting for it. A real search engine would answer
+      "no results found" — that is <b>zero</b> results, not an error.</div>
+      <div class="trap tiny"><b>Three steps of a search engine:</b> <b>crawl</b> (collect pages) → <b>index</b> (store the words)
+      → <b>rank</b> (most relevant first). Order matters. Never say "the search engine searches the whole internet live".</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 8 · HOME PAGE ======================= -->
+  <section class="slide" data-i="8" aria-label="Home page">
+    <div class="slidehead">
+      <div class="kicker">Term 7 of 9</div>
+      <h2>Home Page — the door of the website</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>The main/first page of a website, usually index.html, which opens when the domain name is entered and links to every other page of the site.</p>
+    </div>
+    <div class="urlbar" style="margin-bottom:8px">
+      <input id="hpAddr" placeholder="type a domain, e.g. techbooks.com" spellcheck="false" aria-label="Domain name">
+      <button class="btn primary" id="hpGo">Open domain</button>
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <button class="chip" data-hp="school.edu.pk">school.edu.pk</button>
+      <button class="chip" data-hp="techbooks.com">techbooks.com</button>
+      <button class="chip" data-hp="learnweb.com">learnweb.com</button>
+      <button class="chip" data-hp="mysite.com">mysite.com</button>
+    </div>
+    <div class="sitebox" id="hpSite"></div>
+    <p class="tiny muted" id="hpNote" style="margin-top:8px">Type only the <b>domain name</b> (no file name) and the server sends you the home page automatically.</p>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card"><h3><span class="num">=</span> Why index.html?</h3>
+        <p class="tiny">Web servers are configured to look for a default file — <code>index.html</code> — when the URL has no file name.
+        So <code>www.school.edu.pk</code> and <code>www.school.edu.pk/index.html</code> open the same page.</p></div>
+      <div class="trap tiny"><b>Exam trap:</b> the home page is not "the first page of the internet" and it is not a browser's start page.
+      It is the <b>main page of one website</b>. Try <span class="mono-sm">mysite.com</span> in the Browser Lab — it opens only after you host it.</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 9 · WEB HOSTING ======================= -->
+  <section class="slide" data-i="9" aria-label="Web hosting">
+    <div class="slidehead">
+      <div class="kicker">Term 8 of 9</div>
+      <h2>Web Hosting — put the files on an always-on server</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>A service that stores a website's files on a web server that stays online 24 hours a day so anyone can visit the site.</p>
+    </div>
+    <div class="hostgrid">
+      <div class="machine">
+        <div class="mtitle">Your computer — mysite.com folder (offline)</div>
+        <div class="files" id="hostFiles">
+          <div class="file" data-f="index.html"><span class="ic">▤</span> index.html<span class="sz">2.1 KB</span></div>
+          <div class="file" data-f="about.html"><span class="ic">▤</span> about.html<span class="sz">1.4 KB</span></div>
+          <div class="file" data-f="style.css"><span class="ic">#</span> style.css<span class="sz">0.9 KB</span></div>
+          <div class="file" data-f="logo.svg"><span class="ic">◈</span> logo.svg<span class="sz">3.2 KB</span></div>
+        </div>
+        <p class="tiny muted" id="hostLocalNote" style="margin:8px 0 0">These 4 files are on your computer only. Nobody else can open them.</p>
+      </div>
+      <div class="machine">
+        <div class="mtitle">Hosting server — online 24 hours</div>
+        <div class="rack" id="rack">
+          <div class="rackrow"><span class="led" data-led="0"></span> web server · httpd</div>
+          <div class="rackrow"><span class="led" data-led="1"></span> disk · /public_html</div>
+          <div class="rackrow"><span class="led" data-led="2"></span> dns · mysite.com</div>
+          <div class="rackrow"><span class="led" data-led="3"></span> network · 100 Mb/s</div>
+        </div>
+        <div class="livebox" id="liveBox">
+          <b class="ok">● Site is LIVE</b> — anyone in the world can open
+          <span class="u" id="liveUrl">https://mysite.com/index.html</span>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn primary" id="upBtn">⇧ Upload website</button>
+      <button class="btn" id="openLab">Open mysite.com in Browser Lab</button>
+      <span class="pill ghost" id="hostPill">status: not hosted</span>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>Notice:</b> the files worked on your own computer, but nobody else could see them. Hosting = copying them
+      to a server that never sleeps, and pointing the domain at it.</div>
+      <div class="trap tiny"><b>Exam trap:</b> <b>web server</b> = the machine/software that answers requests.
+      <b>Web hosting</b> = the <b>service</b> (usually paid, monthly) that rents you space on that server. Same idea as:
+      "fridge" vs "cold storage service".</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 10 · WEB SERVER ======================= -->
+  <section class="slide" data-i="10" aria-label="Web server">
+    <div class="slidehead">
+      <div class="kicker">Term 9 of 9</div>
+      <h2>Web Server — a request in, a response out</h2>
+    </div>
+    <div class="defbox">
+      <span class="lbl">Exam definition — memorise this line</span>
+      <p>A computer (and the software on it) that stores web pages and sends them to browsers over HTTP/HTTPS, answering each request with a status code (200, 404, 500…).</p>
+    </div>
+    <div class="row" style="margin-bottom:4px">
+      <button class="btn sm" data-req="/index.html">GET /index.html</button>
+      <button class="btn sm" data-req="/missing.html">GET /missing.html</button>
+      <button class="btn sm" data-req="/old-page">GET /old-page (redirect)</button>
+      <button class="btn sm" data-req="/crash">GET /crash (break it)</button>
+      <span class="statustag" id="srvStatus">waiting for a request</span>
+    </div>
+    <div class="wirebox" id="wire">
+      <div class="pk" id="packet" style="left:8%">GET /index.html</div>
+      <div class="ends"><span class="endL">your browser</span><span class="endR">web server · port 443</span></div>
+    </div>
+    <div class="hdr">
+      <div>
+        <div class="paneLabel">Request headers (browser → server)</div>
+        <div class="hdrbox req" id="reqBox">— press a GET button —</div>
+      </div>
+      <div>
+        <div class="paneLabel">Response headers (server → browser)</div>
+        <div class="hdrbox res" id="resBox">— no response yet —</div>
+      </div>
+    </div>
+    <div class="paneLabel">Server log</div>
+    <div class="log" id="srvLog"><div class="c2">[boot] server listening on 0.0.0.0:443</div></div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>Status codes to memorise:</b> <b>200</b> OK (file found) · <b>301</b> moved permanently
+      (redirect) · <b>404</b> not found (file missing) · <b>500</b> server error (server's own bug).</div>
+      <div class="trap tiny"><b>HTTP vs HTTPS:</b> both are protocols for asking and answering. HTTPS adds <b>encryption</b>
+      (a padlock in the address bar). A web server listens for requests and answers with a <b>status code + headers + the page</b>.</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 11 · BROWSER LAB ======================= -->
+  <section class="slide" data-i="11" aria-label="Browser lab">
+    <div class="slidehead">
+      <div class="kicker">Lab · all 9 terms together</div>
+      <h2>Browser Lab — 4 websites, real behaviour</h2>
+      <p class="lead">Type a URL, follow links, go back, view source. Try <span class="mono-sm">nowhere.xyz</span> (DNS error) and
+      <span class="mono-sm">techbooks.com/missing</span> (404).</p>
+    </div>
+    <div class="toolbar" style="margin-bottom:8px">
+      <button class="tbtn" id="labBack">← Back</button>
+      <button class="tbtn" id="labFwd">Forward →</button>
+      <button class="tbtn" id="labReload">⟳</button>
+      <button class="tbtn" id="labHome">⌂</button>
+      <div class="addrwrap">
+        <span class="lock" aria-hidden="true"><svg width="10" height="12" viewBox="0 0 10 12"><path d="M2.2 5.2V3.6a2.8 2.8 0 0 1 5.6 0v1.6" fill="none" stroke="#34d399" stroke-width="1.2"/><rect x=".6" y="5.1" width="8.8" height="6.4" rx="1.5" fill="#34d399"/></svg></span>
+        <input id="labAddr" value="school.edu.pk" spellcheck="false" aria-label="Lab address bar">
+      </div>
+      <button class="tbtn" id="labGo">Go</button>
+      <button class="tbtn" id="labSrc" title="View source">&lt;/&gt;</button>
+    </div>
+    <div class="row" style="margin-bottom:8px">
+      <button class="chip" data-lab="school.edu.pk">school.edu.pk</button>
+      <button class="chip" data-lab="techbooks.com">techbooks.com</button>
+      <button class="chip" data-lab="learnweb.com">learnweb.com</button>
+      <button class="chip" data-lab="mysite.com">mysite.com</button>
+      <button class="chip" data-lab="nowhere.xyz">nowhere.xyz</button>
+      <button class="chip" data-lab="techbooks.com/missing">techbooks.com/missing</button>
+    </div>
+    <div class="sitebox" id="labPage"></div>
+    <div class="explain" id="labStatus" style="margin-top:8px">DNS lookup → HTTP GET → render. Watch this line.</div>
+    <div class="sourceview" id="labSource" style="display:none;margin-top:8px"></div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="note tiny"><b>DNS error vs 404 — the difference:</b> a <b>DNS error</b> means the domain name itself does not exist,
+      so no computer was found at all. A <b>404</b> means the computer <b>was</b> found and answered, but the file you asked for is not there.</div>
+      <div class="trap tiny"><b>One line to remember:</b> DNS finds the <b>server</b>; the path finds the <b>file</b> on that server.</div>
+    </div>
+  </section>
+
+  <!-- ======================= SLIDE 12 · QUIZ ======================= -->
+  <section class="slide" data-i="12" aria-label="Quiz">
+    <div class="slidehead">
+      <div class="kicker">Test yourself</div>
+      <h2>Quiz — 10 questions, one at a time</h2>
+      <p class="lead">Pick an answer and you get the explanation straight away. At the end you get a score and a list of terms to revise.</p>
+    </div>
+    <div class="quizwrap" id="quizWrap"></div>
+  </section>
+
+  <!-- ======================= SLIDE 13 · REVISION ======================= -->
+  <section class="slide" data-i="13" aria-label="Revision sheet">
+    <div class="slidehead">
+      <div class="kicker">Revision sheet</div>
+      <h2>All 9 definitions + the memory chain</h2>
+      <p class="lead">Read these lines the night before the paper. Each one is a full-mark answer.</p>
+    </div>
+    <div class="deflist" id="defList"></div>
+    <div class="card" style="margin-top:12px">
+      <h3><span class="num">CHAIN</span> How one typed URL becomes the web</h3>
+      <div class="chain">
+        <span class="node2">URL</span> <span class="arr">→</span> <span class="node2">DNS</span> <span class="arr">→</span>
+        <span class="node2">web server</span> <span class="arr">→</span> <span class="node2">web page</span> <span class="arr">→</span>
+        <span class="node2">browser</span> <span class="arr">→</span> <span class="node2">website</span> <span class="arr">→</span>
+        <span class="node2">home page</span> <span class="arr">→</span> <span class="node2">hyperlink</span>
+        <span class="arr">... =</span> <span class="eq">WWW</span>
+      </div>
+      <p class="tiny muted" style="margin-top:8px">Say it out loud 3 times: <i>"Address, look up the server, server sends the page,
+      browser draws it, you click a link, and that link is the web."</i></p>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3><span class="num">GAME</span> Match the term to its meaning</h3>
+      <p class="tiny muted">Tap one term on the left, then its meaning on the right. 9 pairs. Wrong taps shake.</p>
+      <div class="mstat" style="margin:8px 0">
+        <span>attempts <b id="mAtt">0</b></span>
+        <span>correct <b id="mOk">0</b></span>
+        <span>accuracy <b id="mAcc">—</b></span>
+        <span>pairs <b id="mPairs">0/9</b></span>
+        <button class="btn sm" id="mReset" style="margin-left:auto">Shuffle &amp; restart</button>
+      </div>
+      <div class="matchgrid">
+        <div><div class="mcolhead">Tap a term</div><div class="mcol" id="mLeft"></div></div>
+        <div><div class="mcolhead">…then its meaning</div><div class="mcol" id="mRight"></div></div>
+      </div>
+      <p class="tiny ok" id="mDone" style="display:none;margin-top:10px"><b>All 9 pairs locked. ✔</b> That is the whole chapter in one game.</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="navbar" aria-label="Presentation navigation">
+  <button class="btn" id="prev">← Prev</button>
+  <div id="dots" role="tablist" aria-label="Slides"></div>
+  <span class="counter" id="counter">1 / 14</span>
+  <button class="btn primary" id="next">Next →</button>
+</nav>
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   0) THE GLOBAL CLICK ROUTER  (registered before anything else)
+   ------------------------------------------------------------
+   Every navigation click in this whole file goes through this
+   one listener. No module owns navigation, so no module can
+   break it.
+   ============================================================ */
+document.addEventListener('click', function(ev){
+  var t = ev.target;
+  if(!t || !t.closest){ return; }
+  var go = t.closest('[data-go]');
+  if(go){
+    var v = String(go.getAttribute('data-go') || '').trim();
+    if(v === 'next'){ ev.preventDefault(); nextSlide(); return; }
+    if(v === 'prev'){ ev.preventDefault(); prevSlide(); return; }
+    var n = parseInt(v, 10);
+    if(!isNaN(n)){ ev.preventDefault(); goTo(n); return; }
+  }
+  if(t.closest('#next')){ ev.preventDefault(); nextSlide(); return; }
+  if(t.closest('#prev')){ ev.preventDefault(); prevSlide(); return; }
+}, false);
+
+/* ============================================================
+   1) ERROR PLUMBING  ·  one broken demo must never blank the page
+   ============================================================ */
+var ERR_N = 0;
+var errbarEl = document.getElementById('errbar');
+var badgeEl  = document.getElementById('badge');
+
+function showError(msg){
+  ERR_N++;
+  try{
+    errbarEl.textContent = '⚠ JS error ' + ERR_N + ': ' + msg + '   — the rest of the presentation keeps working.';
+    errbarEl.classList.add('on');
+    badgeEl.classList.add('bad');
+    badgeEl.textContent = 'JS ERROR · ' + ERR_N;
+  }catch(e){ /* nothing left to do */ }
+}
+function logError(name, e){
+  var m = (e && (e.message ? e.message : e)) + '';
+  if(window.console && console.error){ console.error('[' + name + ']', e); }
+  showError(name + ' → ' + m);
+}
+function safe(name, fn){
+  try{ fn(); }catch(e){ logError(name, e); }
+}
+window.addEventListener('error', function(ev){
+  var where = '';
+  if(ev && ev.filename){ where = ' @ ' + String(ev.filename).split('/').pop() + ':' + (ev.lineno || 0); }
+  showError(((ev && ev.message) || 'unknown error') + where);
+});
+window.addEventListener('unhandledrejection', function(ev){
+  var r = ev && ev.reason;
+  showError('promise: ' + ((r && r.message) ? r.message : r));
+});
+
+/* ============================================================
+   2) tiny helpers
+   ============================================================ */
+function $(sel, root){ return (root || document).querySelector(sel); }
+function $$(sel, root){
+  return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+}
+function on(el, ev, fn){ if(el){ el.addEventListener(ev, fn); } }
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+/* build an HTML comment marker from pieces: keeps the literal sequence out of
+   the script body, which naive preview sanitisers like to trip over */
+function cmt(t){ return '<' + '!' + '-- ' + t + ' --' + '>'; }
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function tab(node, obj){ while(node){ if(node === obj) return true; node = node.parentNode; } return false; }
+
+/* ============================================================
+   3) NAVIGATION STATE  ·  14 slides, hooks run when shown
+   ============================================================ */
+var TOTAL = 14;
+var LAST = TOTAL - 1;
+var cur = 0;
+var hooks = {};
+function onShow(i, fn){ (hooks[i] || (hooks[i] = [])).push(fn); }
+
+var slides = [], dots = [];
+var counterEl  = $('#counter');
+var termPill   = $('#termpill');
+var progPill   = $('#progresspill');
+var dotsEl     = $('#dots');
+
+function goTo(i){
+  var n = parseInt(i, 10);
+  if(isNaN(n)){ n = 0; }
+  n = clamp(n, 0, LAST);
+  for(var k = 0; k < slides.length; k++){
+    slides[k].classList.toggle('active', k === n);
+    slides[k].setAttribute('aria-hidden', k === n ? 'false' : 'true');
+  }
+  for(var d = 0; d < dots.length; d++){
+    dots[d].classList.toggle('on', d === n);
+    dots[d].setAttribute('aria-selected', d === n ? 'true' : 'false');
+  }
+  cur = n;
+  if(counterEl){ counterEl.textContent = (n + 1) + ' / ' + TOTAL; }
+  if(progPill){ progPill.textContent = (n + 1) + ' / ' + TOTAL; }
+  if(termPill){
+    termPill.textContent = (n >= 2 && n <= 10) ? ('Term ' + (n - 1) + ' of 9') : 'Chapter overview';
+  }
+  try{ window.scrollTo(0, 0); }catch(e){}
+  if(document.documentElement){ document.documentElement.scrollTop = 0; }
+  if(document.body){ document.body.scrollTop = 0; }
+  var list = hooks[n];
+  if(list){
+    for(var h = 0; h < list.length; h++){
+      var fn = list[h];
+      safe('slide-' + n + '-hook', fn);
+    }
+  }
+}
+function nextSlide(){ goTo(cur + 1); }
+function prevSlide(){ goTo(cur - 1); }
+
+/* keyboard: ← → move, but never while typing in a field */
+document.addEventListener('keydown', function(ev){
+  var t = ev.target || {};
+  var tag = (t.tagName || '').toUpperCase();
+  if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable){ return; }
+  if(ev.key === 'ArrowRight' || ev.key === 'PageDown'){ ev.preventDefault(); nextSlide(); }
+  else if(ev.key === 'ArrowLeft' || ev.key === 'PageUp'){ ev.preventDefault(); prevSlide(); }
+  else if(ev.key === 'Home'){ ev.preventDefault(); goTo(0); }
+  else if(ev.key === 'End'){ ev.preventDefault(); goTo(LAST); }
+});
+
+/* ============================================================
+   4) SHARED DATA  ·  the 9 definitions (used by 3 slides)
+   ============================================================ */
+var DEFS = [
+  { term: 'World Wide Web', slide: 2,
+    def: 'A worldwide collection of interlinked web pages stored on web servers and accessed through the internet using a web browser.' },
+  { term: 'Web Page', slide: 3,
+    def: 'A single document written in HTML that can contain text, images, audio, video and hyperlinks, is stored on a web server and has its own URL.' },
+  { term: 'Website', slide: 4,
+    def: 'A collection of related web pages that share one domain name, are stored on the same web server and are joined by hyperlinks.' },
+  { term: 'Web Browser', slide: 5,
+    def: "Application software that requests web pages from servers, reads the HTML and renders the page on the user's screen." },
+  { term: 'URL (Uniform Resource Locator)', slide: 6,
+    def: 'The unique address of a resource on the web: protocol + domain name + path + file name.' },
+  { term: 'Search Engine', slide: 7,
+    def: 'A program/website that searches an index of web pages collected by crawlers and lists the most relevant results first.' },
+  { term: 'Home Page', slide: 8,
+    def: 'The main/first page of a website, usually index.html, which opens when the domain name is entered and links to every other page of the site.' },
+  { term: 'Web Hosting', slide: 9,
+    def: "A service that stores a website's files on a web server that stays online 24 hours a day so anyone can visit the site." },
+  { term: 'Web Server', slide: 10,
+    def: 'A computer (and the software on it) that stores web pages and sends them to browsers over HTTP/HTTPS, answering each request with a status code (200, 404, 500...).' }
+];
+
+/* shared flag: has the demo website been "uploaded" in slide 9? */
+var STATE = { mysiteLive: false };
+
+/* ============================================================
+   5) THE PRETEND WEB  ·  four small websites, shared by
+      slides 4, 8, 11 (and the hosting slide's "live" flag)
+   ============================================================ */
+var SITES = {
+  'school.edu.pk': {
+    name: 'City School',
+    nav: [['Home', '/index.html'], ['About Us', '/about.html'], ['Academics', '/academics.html'], ['Contact', '/contact.html']],
+    pages: {
+      '/index.html': {
+        title: 'Home',
+        body: '<div class="herogrid"><div>' +
+          '<h3>Welcome to City School</h3>' +
+          '<p>We are a secondary school in Karachi. This is our <b>home page</b> — the first page of the website.</p>' +
+          '<p>Go on: <button class="slink" data-link="/about.html">About Us</button> or ' +
+          '<button class="slink" data-link="/academics.html">Academics</button></p></div>' +
+          '<div class="thumb">SCHOOL PHOTO</div></div>' +
+          '<div class="box">This website has <b>4 pages</b> — Home, About Us, Academics, Contact — but only <b>one domain name</b>: school.edu.pk. So it is <b>one website</b>.</div>'
+      },
+      '/about.html': {
+        title: 'About Us',
+        body: '<h3>About Us</h3>' +
+          '<p>City School opened in 1998 with 40 students. Today we teach classes 6 to 10.</p>' +
+          '<ul><li>Principal: Mrs. Ayesha Khan</li><li>2 computer labs with 40 PCs</li><li>Computer Science is taught from class 6</li></ul>' +
+          '<div class="box">Notice the URL above: it now ends in <b>/about.html</b>. The domain did not change, so you are still inside the same website.</div>' +
+          '<p><button class="slink" data-link="/index.html">← Back to the home page</button></p>'
+      },
+      '/academics.html': {
+        title: 'Academics',
+        body: '<h3>Academics</h3>' +
+          '<p>We follow the national curriculum. Subjects in class 9:</p>' +
+          '<ul><li>Computer Science — Chapter 6: Web Development</li><li>Mathematics</li><li>Physics</li><li>Chemistry</li><li>English &amp; Urdu</li></ul>' +
+          '<div class="box">Every page here is a separate <b>web page</b> file, but together they form one <b>website</b>.</div>' +
+          '<p><button class="slink" data-link="/contact.html">Need help? Contact us →</button></p>'
+      },
+      '/contact.html': {
+        title: 'Contact',
+        body: '<h3>Contact</h3>' +
+          '<p>Address: 12-A, Shahrah-e-Faisal, Karachi</p>' +
+          '<p>Phone: 021-345 6789</p>' +
+          '<p>Email: info@school.edu.pk</p>' +
+          '<p><button class="slink" data-link="/index.html">← Back to the home page</button></p>'
+      }
+    }
+  },
+  'techbooks.com': {
+    name: 'TechBooks',
+    nav: [['Home', '/index.html'], ['Books', '/books.html'], ['Contact', '/contact.html']],
+    pages: {
+      '/index.html': {
+        title: 'Home',
+        body: '<div class="herogrid"><div><h3>TechBooks — books for computer students</h3>' +
+          '<p>Cheap, simple books about computers, written for Pakistani students.</p>' +
+          '<p><button class="slink" data-link="/books.html">See all books</button></p></div>' +
+          '<div class="thumb">BOOKS</div></div>' +
+          '<div class="box">This is the <b>home page</b> of techbooks.com. Try <b>techbooks.com/missing</b> in the Browser Lab to get a 404.</div>'
+      },
+      '/books.html': {
+        title: 'Books',
+        body: '<h3>Books</h3><ul><li>Computer Science 9 — Rs. 450</li><li>Computer Science 10 — Rs. 480</li>' +
+          '<li>Learn HTML in 7 days — Rs. 300</li></ul>' +
+          '<p><button class="slink" data-link="/contact.html">How do I order? →</button></p>'
+      },
+      '/contact.html': {
+        title: 'Contact',
+        body: '<h3>Contact</h3><p>WhatsApp: 0300-123 4567</p><p>Email: orders@techbooks.com</p>' +
+          '<p><button class="slink" data-link="/index.html">← Home</button></p>'
+      }
+    }
+  },
+  'learnweb.com': {
+    name: 'LearnWeb',
+    nav: [['Home', '/index.html'], ['Lessons', '/lessons.html'], ['Quiz', '/quiz.html']],
+    pages: {
+      '/index.html': {
+        title: 'Home',
+        body: '<div class="herogrid"><div><h3>LearnWeb — learn web development free</h3>' +
+          '<p>Short lessons in simple English. No internet package needed for this demo.</p>' +
+          '<p><button class="slink" data-link="/lessons.html">Start lesson 1</button></p></div>' +
+          '<div class="thumb">LEARN</div></div>' +
+          '<div class="box">A search engine would <b>crawl</b> this page, save its words in an <b>index</b>, and then show it when you search "web development".</div>'
+      },
+      '/lessons.html': {
+        title: 'Lessons',
+        body: '<h3>Lessons</h3><ul><li>1. What is the World Wide Web?</li><li>2. Your first HTML page</li>' +
+          '<li>3. CSS: colours and fonts</li><li>4. Hosting your site</li></ul>' +
+          '<p><button class="slink" data-link="/quiz.html">Try the quiz →</button></p>'
+      },
+      '/quiz.html': {
+        title: 'Quiz',
+        body: '<h3>Quiz</h3><p>Q: What does HTML stand for?</p>' +
+          '<ul><li>A. Hyper Text Markup Language</li><li>B. High Tech Machine Language</li></ul>' +
+          '<div class="box">Answer: <b>A</b>. HTML gives the <b>structure</b> of a web page.</div>' +
+          '<p><button class="slink" data-link="/index.html">← Home</button></p>'
+      }
+    }
+  },
+  'mysite.com': {
+    name: 'My Site',
+    nav: [['Home', '/index.html'], ['Gallery', '/gallery.html'], ['Contact', '/contact.html']],
+    pages: {
+      '/index.html': {
+        title: 'Home',
+        body: '<div class="herogrid"><div><h3>My Site</h3>' +
+          '<p>A small website made by a class 9 student for the computer practical.</p>' +
+          '<p><button class="slink" data-link="/gallery.html">See my gallery</button></p></div>' +
+          '<div class="thumb">MY SITE</div></div>' +
+          '<div class="box">This website lives on your own computer until you <b>host</b> it. Upload it in the Web Hosting slide, then open it in the Browser Lab.</div>'
+      },
+      '/gallery.html': {
+        title: 'Gallery',
+        body: '<h3>Gallery</h3><p>Photos from our computer lab, science fair and sports day.</p>' +
+          '<div class="box">Every image here is a separate file on the web server, just like this HTML file.</div>' +
+          '<p><button class="slink" data-link="/index.html">← Home</button></p>'
+      },
+      '/contact.html': {
+        title: 'Contact',
+        body: '<h3>Contact</h3><p>Email: me@mysite.com</p>' +
+          '<p><button class="slink" data-link="/index.html">← Home</button></p>'
+      }
+    }
+  }
+};
+
+/* build the HTML for one page of one pretend site */
+function siteHTML(domain, path, opts){
+  opts = opts || {};
+  var s = SITES[domain];
+  if(!s){ return null; }
+  if(!path || path === '/'){ path = '/index.html'; }
+  var p = s.pages[path];
+  if(!p){ return null; }
+  var nav = s.nav.map(function(it){
+    var cls = 'snav' + (it[1] === path ? ' on' : '');
+    return '<button class="' + cls + '" data-link="' + it[1] + '">' + esc(it[0]) + '</button>';
+  }).join('');
+  var chrome = '';
+  if(opts.chrome !== false){
+    chrome = '<div class="fakechrome"><span class="lights"><i></i><i></i><i></i></span>' +
+      '<span class="urlfield">https://<span class="u-dom">' + esc(domain) + '</span>' +
+      '<span class="u-path">' + esc(path) + '</span></span></div>';
+  }
+  var pageCount = Object.keys(s.pages).length;
+  var html = chrome +
+    '<div class="site-nav"><span class="sname">' + esc(s.name) + '</span>' + nav + '</div>' +
+    '<div class="sitebody">' + p.body + '</div>' +
+    '<div class="site-foot"><span>© 2026 ' + esc(s.name) + ' · ' + esc(domain) + '</span>' +
+    '<span>' + pageCount + ' pages · 1 website</span></div>';
+  return { html: html, title: p.title, path: path, domain: domain };
+}
+
+/* the raw HTML "the server sent" (for view-source) */
+function sourceOf(domain, path){
+  var s = SITES[domain];
+  var p = s && s.pages[path || '/index.html'];
+  if(!p){ return cmt('no such page on this server'); }
+  var navTxt = s.nav.map(function(it){ return '    <a href="' + it[1] + '">' + it[0] + '</a>'; }).join('\n');
+  return '<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8">\n' +
+    '    <title>' + p.title + ' — ' + s.name + '</title>\n' +
+    '    <link rel="stylesheet" href="/style.css">\n  </head>\n  <body>\n' +
+    '    <nav class="menu">\n' + navTxt + '\n    </nav>\n' +
+    '    <main>\n      ' + String(p.body).replace(/\n/g, '\n      ') + '\n    </main>\n' +
+    '    <footer>© 2026 ' + s.name + '</footer>\n  </body>\n</html>';
+}
+
+/* very small HTML colouriser (escaped string -> markup) */
+function colourise(src){
+  var e = esc(src);
+  e = e.replace(/(&lt;\/?[a-zA-Z0-9!]+)/g, '<span class="tg">$1</span>');
+  e = e.replace(/([a-zA-Z-]+)=(&quot;[^&]*?&quot;)/g, '<span class="at">$1</span>=<span class="st">$2</span>');
+  return e;
+}
+
+/* ============================================================
+   SLIDE 2 · WORLD WIDE WEB  ·  hyperlink network diagram
+   ============================================================ */
+safe('www-diagram', function(){
+  var diagram = $('#wwwDiagram');
+  var wires   = $('#wwwWires');
+  if(!diagram || !wires){ return; }
+
+  var NODES = {
+    home:    { label: 'Home',     fact: 'Home (index.html) is the busiest page: every page of the site links back to it. It is the <b>home page</b> of this mini web.' },
+    about:   { label: 'About',    fact: 'About is linked from Home with one <b>hyperlink</b>. A hyperlink is a word or picture you tap that opens another page.' },
+    contact: { label: 'Contact',  fact: 'Contact shows the site owner\'s address. Search engines crawl pages like this one and store their words in an <b>index</b>.' },
+    gallery: { label: 'Gallery',  fact: 'Gallery holds images. Each image and each page is its own <b>file</b> with its own <b>URL</b> on the web server.' },
+    news:    { label: 'News',     fact: 'News links to three other pages. That is the web: pages joined by hyperlinks — like a spider web of documents.' },
+    blog:    { label: 'Blog',     fact: 'Blog changes every week. Its page is rewritten on the web server, so the next visitor gets the new version.' },
+    help:    { label: 'Help',     fact: 'Help is where a visitor ends up when lost. Follow the links and notice that every hop is just <b>another HTTP request</b>.' }
+  };
+  /* exactly 11 hyperlinks */
+  var LINKS = [
+    ['home', 'about'], ['home', 'contact'], ['home', 'gallery'],
+    ['about', 'news'], ['contact', 'blog'], ['gallery', 'news'],
+    ['gallery', 'help'], ['news', 'blog'], ['news', 'help'],
+    ['help', 'about'], ['blog', 'home']
+  ];
+
+  var nodeEls = {};
+  $$('.node', diagram).forEach(function(el){
+    var k = el.getAttribute('data-node');
+    nodeEls[k] = el;
+  });
+
+  /* The diagram keeps a fixed 16:9 box in every media, so the links can be
+     laid out with pure percentages + a rotation angle: they stay correct
+     when the slide is hidden, on mobile, and when printing to PDF. */
+  var VW = 1600, VH = 900;
+
+  function nodePoint(key){
+    var el = nodeEls[key];
+    if(!el){ return null; }
+    var x = parseFloat(String(el.style.left).replace('%', ''));
+    var y = parseFloat(String(el.style.top).replace('%', ''));
+    if(isNaN(x) || isNaN(y)){ return null; }
+    return { x: x / 100 * VW, y: y / 100 * VH };
+  }
+
+  function layout(){
+    wires.innerHTML = '';
+    LINKS.forEach(function(pair){
+      var a = nodePoint(pair[0]), b = nodePoint(pair[1]);
+      if(!a || !b){ return; }
+      var dx = b.x - a.x, dy = b.y - a.y;
+      var len = Math.sqrt(dx * dx + dy * dy);
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI;
+      var line = document.createElement('div');
+      line.className = 'wire';
+      line.setAttribute('data-a', pair[0]);
+      line.setAttribute('data-b', pair[1]);
+      line.style.left = (a.x / VW * 100).toFixed(4) + '%';
+      line.style.top  = (a.y / VH * 100).toFixed(4) + '%';
+      line.style.width = (len / VW * 100).toFixed(4) + '%';
+      line.style.transform = 'rotate(' + ang.toFixed(3) + 'deg)';
+      wires.appendChild(line);
+    });
+  }
+
+  var hops = 0, path = [];
+  var factEl = $('#wwwNodeFact'), titleEl = $('#wwwNodeTitle'), histEl = $('#wwwHistory');
+
+  function renderHistory(){
+    var shown = path.slice(-7).map(function(k){ return NODES[k] ? NODES[k].label : k; }).join(' → ');
+    histEl.innerHTML = 'history: <span class="muted">' + esc(shown || '—') + '</span> ' +
+      '<span class="hop">' + hops + ' hop' + (hops === 1 ? '' : 's') + '</span>';
+  }
+
+  on(diagram, 'click', function(ev){
+    var btn = ev.target.closest('.node');
+    if(!btn){ return; }
+    ev.preventDefault();
+    var k = btn.getAttribute('data-node');
+    var n = NODES[k];
+    if(!n){ return; }
+    $$('.node', diagram).forEach(function(el){ el.classList.remove('on'); });
+    btn.classList.add('on');
+    titleEl.textContent = n.label + ' page';
+    factEl.innerHTML = n.fact;
+    path.push(k);
+    if(path.length > 1){ hops++; }
+    renderHistory();
+    /* light up the wires that touch this page */
+    $$('.wire', wires).forEach(function(w){
+      var touch = (w.getAttribute('data-a') === k || w.getAttribute('data-b') === k);
+      w.classList.toggle('lit', touch);
+    });
+  });
+
+  var netBtn = $('#tglNet'), timeBtn = $('#tglTime');
+  var netPanel = $('#panelNet'), timePanel = $('#panelTime');
+  on(netBtn, 'click', function(){
+    var open = netPanel.style.display === 'none';
+    netPanel.style.display = open ? 'block' : 'none';
+    timePanel.style.display = 'none';
+    netBtn.classList.toggle('on', open);
+    timeBtn.classList.remove('on');
+  });
+  on(timeBtn, 'click', function(){
+    var open = timePanel.style.display === 'none';
+    timePanel.style.display = open ? 'block' : 'none';
+    netPanel.style.display = 'none';
+    timeBtn.classList.toggle('on', open);
+    netBtn.classList.remove('on');
+  });
+
+  layout();
+  renderHistory();
+  onShow(2, function(){ requestAnimationFrame(layout); });
+  window.addEventListener('resize', function(){ safe('www-resize', layout); });
+
+  /* printing: the diagram may never have been shown, so its wires have
+     no pixel sizes yet. Force a layout pass before the print snapshot. */
+  window.addEventListener('beforeprint', function(){
+    safe('www-beforeprint', function(){
+      var slideEl = diagram.closest('.slide');
+      var hidden = slideEl && !slideEl.classList.contains('active');
+      if(hidden){ slideEl.style.display = 'block'; }
+      layout();
+      if(hidden){ slideEl.style.display = ''; }
+    });
+  });
+});
+
+/* ============================================================
+   SLIDE 3 · WEB PAGE  ·  live HTML editor (no iframe!)
+   ============================================================ */
+safe('live-editor', function(){
+  var codeEl = $('#code'), preview = $('#preview'), badge = $('#renderBadge'), sizeEl = $('#pvSize');
+  if(!codeEl || !preview){ return; }
+
+  var DEFAULT_CODE = [
+    '<!DOCTYPE html>',
+    '<html>',
+    '<head>',
+    '  <style>',
+    '    body { font-family: Arial, sans-serif; background: #fdf7ff; color: #1f1535; padding: 14px; }',
+    '    h1   { color: #6d28d9; border-bottom: 3px solid #22d3ee; padding-bottom: 6px; }',
+    '    p    { line-height: 1.6; }',
+    '    .tag { background: #ede9fe; color: #4c1d95; padding: 3px 9px;',
+    '           border-radius: 999px; font-size: 13px; display: inline-block; }',
+    '    a    { color: #0e7490; }',
+    '    table{ border-collapse: collapse; }',
+    '    td, th { border: 1px solid #cbd5e1; padding: 4px 8px; }',
+    '  </style>',
+    '</head>',
+    '<body>',
+    '  <h1>My first web page</h1>',
+    '  <p class="tag">HTML = structure &middot; CSS = style</p>',
+    '  <p>This sentence is inside a <b>paragraph</b>. Change any line on the left',
+    '     and the preview updates while you type.</p>',
+    '  <p><a href="https://example.com">A hyperlink</a> jumps to another page.</p>',
+    '  <ul>',
+    '    <li>Text</li><li>Images</li><li>Audio</li><li>Video</li><li>Hyperlinks</li>',
+    '  </ul>',
+    '  <table>',
+    '    <tr><th>Term</th><th>Meaning</th></tr>',
+    '    <tr><td>Web page</td><td>One HTML document</td></tr>',
+    '  </table>',
+    '</body>',
+    '</html>'
+  ].join('\n');
+
+  var BIG_CODE = [
+    '<!DOCTYPE html>',
+    '<html>',
+    '<head>',
+    '  <style>',
+    '    body { font-family: Arial, sans-serif; margin: 0; color: #10233d; }',
+    '    header { background: #0d3b66; color: #fff; padding: 14px 16px; }',
+    '    header h1 { margin: 0; font-size: 22px; }',
+    '    nav a { color: #9fe6ff; margin-right: 12px; font-size: 14px; }',
+    '    main { padding: 16px; }',
+    '    .card { border: 1px solid #dbe6f2; border-radius: 10px; padding: 10px; margin: 10px 0;',
+    '            background: #f7fbff; }',
+    '    footer { background: #eef4fb; padding: 10px 16px; font-size: 12px; color: #5b7291; }',
+    '    button { background: #22d3ee; border: 0; padding: 8px 14px; border-radius: 8px;',
+    '             font-weight: 700; cursor: pointer; }',
+    '  </style>',
+    '</head>',
+    '<body>',
+    '  <header>',
+    '    <h1>City School</h1>',
+    '    <nav><a href="/index.html">Home</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>',
+    '  </header>',
+    '  <main>',
+    '    <h2>Welcome</h2>',
+    '    <p>This page has a header, a menu, content cards and a footer &mdash; just like a real',
+    '       web page. It is still <b>one</b> page, and it has its own URL.</p>',
+    '    <div class="card"><b>Class 9 &middot; Computer Science</b><br>Chapter 6: Web Development</div>',
+    '    <div class="card">Try changing the colours in the CSS above.</div>',
+    '    <button>Download notes</button>',
+    '  </main>',
+    '  <footer>&copy; 2026 City School &middot; 3 pages, 1 website</footer>',
+    '</body>',
+    '</html>'
+  ].join('\n');
+
+  var pvStyle = document.createElement('style');
+  pvStyle.id = 'pv-scoped-style';
+  document.head.appendChild(pvStyle);
+
+  /* turn "h1, p { ... }" into ".pv-root h1, .pv-root p { ... }" so the
+     editor's CSS can never leak into the presentation */
+  function scopeCss(css, scope){
+    css = String(css || '').replace(/\/\*[\s\S]*?\*\//g, '');
+    function scopeSel(sel){
+      return sel.split(',').map(function(s){
+        s = s.trim();
+        if(!s){ return ''; }
+        if(s === 'html' || s === 'body' || s === ':root' || s === '*'){ return scope; }
+        if(/^(html|body)(\s|\.|:|\[)/.test(s)){ s = s.replace(/^(html|body)/, ''); }
+        return scope + ' ' + s;
+      }).filter(Boolean).join(', ');
+    }
+    function parse(src){
+      var out = '', selBuf = '', i = 0;
+      while(i < src.length){
+        var ch = src.charAt(i);
+        if(ch === '{'){
+          var name = selBuf.trim();
+          var depth = 1, j = i + 1, inner = '';
+          while(j < src.length && depth > 0){
+            var c2 = src.charAt(j);
+            if(c2 === '{'){ depth++; }
+            else if(c2 === '}'){ depth--; if(depth === 0){ break; } }
+            inner += c2;
+            j++;
+          }
+          if(name.charAt(0) === '@'){
+            if(/^@(media|supports|container)/i.test(name)){ out += name + '{' + parse(inner) + '}'; }
+            else{ out += name + '{' + inner + '}'; }
+          }else if(name){
+            out += scopeSel(name) + '{' + inner + '}';
+          }
+          i = j + 1;
+          selBuf = '';
+          continue;
+        }
+        selBuf += ch;
+        i++;
+      }
+      return out;
+    }
+    return parse(css);
+  }
+
+  var timer = null;
+  function render(){
+    var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
+    var src = codeEl.value || '';
+    var doc = null;
+    try{ doc = new DOMParser().parseFromString(src, 'text/html'); }catch(e){ doc = null; }
+    var cssText = '', bodyHtml = '';
+    if(doc){
+      $$('style', doc).forEach(function(st){ cssText += st.textContent + '\n'; });
+      $$('script,iframe,object,embed,link,meta', doc).forEach(function(n){
+        if(n.parentNode){ n.parentNode.removeChild(n); }
+      });
+      bodyHtml = doc.body ? doc.body.innerHTML : '';
+    }
+    /* never let a typed <script> or <iframe> run inside the presentation */
+    bodyHtml = bodyHtml.replace(/<\s*(script|iframe|object|embed|link|meta)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+                       .replace(/<\s*(script|iframe|object|embed|link|meta)\b[^>]*\/?>/gi, '')
+                       .replace(/\son[a-z]+\s*=\s*"[^"]*"/gi, '')
+                       .replace(/\son[a-z]+\s*=\s*'[^']*'/gi, '')
+                       .replace(/javascript:/gi, '');
+    pvStyle.textContent = scopeCss(cssText, '.pv-root');
+    preview.innerHTML = bodyHtml;
+    var t1 = (window.performance && performance.now) ? performance.now() : Date.now();
+    var ms = (t1 - t0);
+    if(badge){ badge.textContent = 'render ' + (ms < 10 ? ms.toFixed(1) : Math.round(ms)) + ' ms'; }
+    if(sizeEl){ sizeEl.textContent = bodyHtml.length + ' chars out'; }
+  }
+  function renderSoon(){
+    if(timer){ clearTimeout(timer); }
+    timer = setTimeout(function(){ safe('editor-render', render); }, 150);
+  }
+
+  var SNIPS = {
+    h1:    '\n  <h1>My heading</h1>\n',
+    p:     '\n  <p>Write your own sentence here.</p>\n',
+    b:     '\n  <p>This word is <b>bold</b>.</p>\n',
+    a:     '\n  <p>Visit <a href="https://example.com">Example site</a>.</p>\n',
+    img:   '\n  <img src="data:image/svg+xml;utf8,%3Csvg%20xmlns=\'http://www.w3.org/2000/svg\'%20width=\'140\'%20height=\'70\'%3E%3Crect%20width=\'140\'%20height=\'70\'%20rx=\'8\'%20fill=\'%2325d0e8\'/%3E%3Ctext%20x=\'70\'%20y=\'42\'%20font-size=\'14\'%20font-family=\'Arial\'%20text-anchor=\'middle\'%20fill=\'%23081020\'%3EIMAGE%3C/text%3E%3C/svg%3E" alt="blue box" width="140" height="70">\n',
+    ul:    '\n  <ul>\n    <li>First item</li>\n    <li>Second item</li>\n  </ul>\n',
+    table: '\n  <table>\n    <tr><th>Subject</th><th>Marks</th></tr>\n    <tr><td>Computer Science</td><td>75</td></tr>\n  </table>\n'
+  };
+
+  on(codeEl, 'input', renderSoon);
+
+  /* a real <a href="..."> inside the preview would try to leave the page —
+     stop it and explain instead (this also keeps the sandboxed iframe safe) */
+  on(preview, 'click', function(ev){
+    var a = ev.target.closest('a');
+    if(!a){ return; }
+    ev.preventDefault();
+    var href = a.getAttribute('href') || '(no href)';
+    var b = $('#renderBadge');
+    if(b){ b.textContent = 'link → ' + href; }
+  });
+
+  $$('[data-ins]').forEach(function(btn){
+    on(btn, 'click', function(){
+      var key = btn.getAttribute('data-ins');
+      var text = SNIPS[key] || '';
+      var start = codeEl.selectionStart || 0;
+      var end = codeEl.selectionEnd || 0;
+      var v = codeEl.value;
+      codeEl.value = v.slice(0, start) + text + v.slice(end);
+      var pos = start + text.length;
+      try{ codeEl.focus(); codeEl.setSelectionRange(pos, pos); }catch(e){}
+      safe('editor-snippet-render', render);
+    });
+  });
+
+  /* full-screen output: a fixed overlay (works in sandboxed iframes and on phones,
+     where the real Fullscreen API is often not allowed) */
+  var shell = preview.closest('.pv-shell');
+  function setFull(onoff){
+    if(!shell){ return; }
+    shell.classList.toggle('pv-full', !!onoff);
+    document.body.classList.toggle('pv-full-open', !!onoff);
+    var fb = $('#pvFull');
+    if(fb){ fb.textContent = onoff ? '\u26F6 Exit full screen' : '\u26F6 Full screen'; }
+  }
+  on($('#pvFull'), 'click', function(){ setFull(!(shell && shell.classList.contains('pv-full'))); });
+  on($('#pvExit'), 'click', function(){ setFull(false); });
+  document.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape' && shell && shell.classList.contains('pv-full')){ ev.preventDefault(); setFull(false); }
+  });
+
+  on($('#edBig'), 'click', function(){
+    codeEl.value = BIG_CODE;
+    safe('editor-big-render', render);
+  });
+  on($('#edReset'), 'click', function(){
+    codeEl.value = DEFAULT_CODE;
+    safe('editor-reset-render', render);
+  });
+
+  codeEl.value = DEFAULT_CODE;
+  render();
+});
+
+/* ============================================================
+   SLIDE 4 · WEBSITE  ·  4 pages, one website
+   ============================================================ */
+safe('slide4-website', function(){
+  var box = $('#site4');
+  if(!box){ return; }
+  var domain = 'school.edu.pk';
+  var path = '/index.html';
+
+  function render(){
+    var r = siteHTML(domain, path, { chrome: true });
+    box.innerHTML = r ? r.html : '<div class="errpage"><div class="big">404</div><p>No such page.</p></div>';
+  }
+  on(box, 'click', function(ev){
+    var b = ev.target.closest('[data-link]');
+    if(!b){ return; }
+    ev.preventDefault();
+    path = b.getAttribute('data-link');
+    safe('slide4-nav', render);
+  });
+  render();
+});
+
+/* ============================================================
+   SLIDE 5 · WEB BROWSER  ·  every button explains itself
+   ============================================================ */
+safe('slide5-browser', function(){
+  var box = $('#brPage'), addr = $('#brAddr'), explain = $('#brExplain');
+  var srcWrap = $('#brSource'), srcLabel = $('#brSrcLabel');
+  if(!box || !explain){ return; }
+
+  var domain = 'school.edu.pk';
+  var path = '/index.html';
+  var hist = ['/index.html'];
+  var hIdx = 0;
+  var showingSrc = false;
+  var bookmarks = [];
+
+  function say(html){ explain.innerHTML = html; }
+  function fullUrl(){ return 'https://' + domain + path; }
+
+  function paint(){
+    addr.value = fullUrl();
+    if(showingSrc){
+      srcWrap.style.display = 'block';
+      srcLabel.style.display = 'block';
+      srcWrap.innerHTML = colourise(sourceOf(domain, path));
+      box.style.opacity = '.35';
+    }else{
+      srcWrap.style.display = 'none';
+      srcLabel.style.display = 'none';
+      box.style.opacity = '1';
+      var r = siteHTML(domain, path, { chrome: false });
+      box.innerHTML = r ? r.html : '<div class="errpage"><div class="big">404</div></div>';
+    }
+  }
+  function go(p, why){
+    path = p;
+    hist = hist.slice(0, hIdx + 1);
+    hist.push(p);
+    hIdx = hist.length - 1;
+    showingSrc = false;
+    paint();
+    if(why){ say(why); }
+  }
+
+  var MESSAGES = {
+    back: '<b>Back ←</b> — shows the page you visited <i>before</i> this one. The browser keeps its own <b>history list</b>, so no new request is sent.',
+    forward: '<b>Forward →</b> — moves ahead again in that same history list. It is greyed out in real browsers until you have gone back.',
+    reload: '<b>Reload ⟳</b> — throws the page away and sends the <b>same HTTP GET request</b> again, to get a fresh copy from the server.',
+    home: '<b>Home ⌂</b> — jumps to your chosen start page. Careful: this is <i>your</i> start page, not the website\'s home page. Only if you set it to <code>school.edu.pk</code> do the two match.',
+    source: '<b>View source &lt;/&gt;</b> — shows the raw HTML the server sent. This is what the browser reads and then <b>renders</b> into the pretty page. Tap again to go back.',
+    bookmark: '<b>Bookmark ☆</b> — saves this URL in a list inside the browser, so you can return later without typing the address.',
+    address: '<b>Address bar</b> — where you type the <b>URL</b>. The browser reads the protocol, asks DNS for the domain\'s server, then sends an HTTP GET for the path.'
+  };
+
+  $$('[data-bt]').forEach(function(btn){
+    on(btn, 'click', function(){
+      var k = btn.getAttribute('data-bt');
+      if(k === 'back'){
+        if(hIdx > 0){ hIdx--; path = hist[hIdx]; showingSrc = false; paint(); say(MESSAGES.back); }
+        else{ say('<b>Back ←</b> — nothing before this page. You are at the start of this browsing session.'); }
+        return;
+      }
+      if(k === 'forward'){
+        if(hIdx < hist.length - 1){ hIdx++; path = hist[hIdx]; showingSrc = false; paint(); say(MESSAGES.forward); }
+        else{ say('<b>Forward →</b> — nothing ahead. Go back first, then forward again.'); }
+        return;
+      }
+      if(k === 'reload'){
+        say(MESSAGES.reload + '<br><span class="mono-sm">GET ' + esc(path) + ' HTTP/1.1 · Host: ' + esc(domain) + '</span>');
+        return;
+      }
+      if(k === 'home'){
+        go('/index.html');
+        say(MESSAGES.home);
+        return;
+      }
+      if(k === 'source'){
+        showingSrc = !showingSrc;
+        btn.classList.toggle('on', showingSrc);
+        paint();
+        say(MESSAGES.source);
+        return;
+      }
+      if(k === 'bookmark'){
+        if(bookmarks.indexOf(fullUrl()) < 0){ bookmarks.push(fullUrl()); }
+        say(MESSAGES.bookmark + '<br><span class="mono-sm">★ ' + esc(bookmarks.join('  ·  ')) + '</span>');
+        return;
+      }
+    });
+  });
+
+  on(addr, 'click', function(){ say(MESSAGES.address); });
+  on(addr, 'focus', function(){ say(MESSAGES.address); });
+
+  /* a link inside the page = a brand new HTTP request */
+  on(box, 'click', function(ev){
+    var b = ev.target.closest('[data-link]');
+    if(!b){ return; }
+    ev.preventDefault();
+    if(showingSrc){ return; }
+    var target = b.getAttribute('data-link');
+    go(target);
+    say('<b>A link was clicked → a new HTTP GET request.</b><br>' +
+      '<span class="mono-sm">GET ' + esc(target) + ' HTTP/1.1</span><br>' +
+      '<span class="mono-sm">Host: ' + esc(domain) + '</span><br>' +
+      'The server answered <b>200 OK</b> and sent the HTML of that page, so the browser rendered it. This is how you move around a website.');
+  });
+
+  paint();
+  say('Tap any button above, or click a link inside the page, to learn what it really does.');
+});
+
+/* ============================================================
+   SLIDE 6 · URL  ·  real parser using the browser's new URL()
+   ============================================================ */
+safe('url-parser', function(){
+  var input = $('#urlIn'), segBox = $('#urlSeg'), cards = $('#urlCards'), msg = $('#urlMsg');
+  var partTitle = $('#urlPartTitle'), partText = $('#urlPartText');
+  if(!input || !segBox){ return; }
+
+  var PARTS = {
+    protocol: 'The <b>protocol</b> (also called the scheme) tells the browser <i>how</i> to talk to the server. <code>https</code> means HTTP with encryption. <code>http</code> is the older, unencrypted version.',
+    domain: 'The <b>domain name</b> is the name of the computer (the web server) that holds the page. DNS turns this name into an IP address like 203.0.113.7. In an exam: protocol + domain name + path + file name.',
+    port: 'The <b>port</b> is the door number on the server. Web servers usually use <b>80</b> for http and <b>443</b> for https, and those two are hidden from you — that is why most URLs have no port.',
+    path: 'The <b>path</b> is the folder route and the <b>file name</b> inside the server: <code>/exams/result.html</code>. The folders are the route, <code>result.html</code> is the file.',
+    query: 'The <b>query string</b> starts after <code>?</code> and carries extra data in key=value pairs, separated by <code>&amp;</code>. Here class=9 and subject=cs are sent to the server.',
+    fragment: 'The <b>fragment</b> starts after <code>#</code>. It is handled by the <b>browser only</b> — it jumps to a section on the page and is never sent to the server.'
+  };
+
+  function say(part){
+    if(!PARTS[part]){ return; }
+    partTitle.textContent = part.charAt(0).toUpperCase() + part.slice(1);
+    partText.innerHTML = PARTS[part];
+    $$('.seg', segBox).forEach(function(s){
+      s.classList.toggle('on', s.getAttribute('data-part') === part);
+    });
+  }
+
+  function parse(){
+    var raw = String(input.value || '').trim();
+    if(!raw){
+      msg.className = 'msg badmsg';
+      msg.textContent = 'Type a URL first.';
+      return;
+    }
+    var hadScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw);
+    var candidate = hadScheme ? raw : ('https://' + raw.replace(/^\/+/, ''));
+    var u = null;
+    try{ u = new URL(candidate); }catch(e){ u = null; }
+    if(!u || !u.hostname || u.hostname.indexOf('.') < 0){
+      segBox.innerHTML = '<span class="seg ghost">could not parse</span>';
+      cards.innerHTML = '';
+      msg.className = 'msg badmsg';
+      msg.textContent = 'That is not a valid URL. A URL needs a domain name with a dot, for example: school.edu.pk/exams/result.html';
+      partTitle.textContent = 'What the parts mean';
+      partText.textContent = 'Fix the address and press Parse again.';
+      return;
+    }
+
+    var proto = u.protocol;                       /* "https:" */
+    var host = u.hostname;                        /* "www.school.edu.pk" */
+    var port = u.port;                            /* "" or "443" */
+    var pathName = u.pathname || '/';
+    var query = u.search || '';
+    var frag = u.hash || '';
+    var segs = pathName.split('/').filter(Boolean);
+    var fileName = (pathName.length > 1 && segs.length) ? segs[segs.length - 1] : 'index.html';
+
+    segBox.innerHTML = '';
+    function addSeg(text, cls, part){
+      var b = document.createElement('button');
+      b.className = 'seg ' + cls;
+      b.type = 'button';
+      b.textContent = text;
+      b.setAttribute('data-part', part);
+      segBox.appendChild(b);
+    }
+    addSeg(proto + '//', 'scheme', 'protocol');
+    addSeg(host, 'domain', 'domain');
+    if(port){ addSeg(':' + port, 'port', 'port'); }
+    else{ addSeg(':—', 'ghost', 'port'); }
+    addSeg(pathName, 'path', 'path');
+    if(query){ addSeg(query, 'query', 'query'); }
+    else{ addSeg('?—', 'ghost', 'query'); }
+    if(frag){ addSeg(frag, 'frag', 'fragment'); }
+    else{ addSeg('#—', 'ghost', 'fragment'); }
+
+    var rows = [
+      ['protocol', proto.replace(':', ''), 'protocol'],
+      ['domain name', host, 'domain'],
+      ['port', port || ('default (https=443)'), 'port'],
+      ['path', pathName, 'path'],
+      ['folder', (pathName.replace(/\/[^/]*$/, '') || '/'), 'path'],
+      ['file name', fileName, 'path'],
+      ['query string', query ? query.replace('?', '') : 'none', 'query'],
+      ['fragment', frag ? frag.replace('#', '') : 'none', 'fragment']
+    ];
+    cards.innerHTML = rows.map(function(r){
+      return '<div class="ucard" data-part="' + r[2] + '"><div class="k">' + esc(r[0]) + '</div>' +
+        '<div class="v">' + esc(r[1]) + '</div></div>';
+    }).join('');
+
+    msg.className = 'msg';
+    msg.innerHTML = '<span class="ok">Parsed ✔</span> ' +
+      (hadScheme ? '' : 'You typed no protocol, so I added <code>https://</code> for you. ') +
+      'The browser\'s own <code>new URL()</code> did the real work.';
+
+    say('protocol');
+  }
+
+  on($('#urlParse'), 'click', function(){ safe('url-parse', parse); });
+  on(input, 'keydown', function(ev){ if(ev.key === 'Enter'){ ev.preventDefault(); safe('url-parse', parse); } });
+  on($('#urlAlt'), 'click', function(){
+    input.value = 'google.com/search?q=web+development';
+    safe('url-parse', parse);
+  });
+  on(segBox, 'click', function(ev){
+    var s = ev.target.closest('[data-part]');
+    if(s){ say(s.getAttribute('data-part')); }
+  });
+  on(cards, 'click', function(ev){
+    var s = ev.target.closest('[data-part]');
+    if(s){ say(s.getAttribute('data-part')); }
+  });
+
+  parse();
+});
+
+/* small bridge so the hosting slide can open the lab */
+var LABAPI = { open: function(){} };
+
+/* ============================================================
+   SLIDE 7 · SEARCH ENGINE  ·  real inverted index + TF-IDF
+   ============================================================ */
+safe('search-engine', function(){
+  var docList = $('#docList'), results = $('#results');
+  var qIn = $('#qIn'), crawlBtn = $('#crawlBtn');
+  if(!docList || !results){ return; }
+
+  var DOCS = [
+    { t: 'What is the World Wide Web?', site: 'learnweb.com',
+      x: 'The World Wide Web is a worldwide collection of interlinked web pages stored on web servers and accessed through the internet using a web browser.' },
+    { t: 'Web pages and HTML', site: 'learnweb.com',
+      x: 'A web page is a single document written in HTML. It can contain text images audio video and hyperlinks. Every web page is stored on a web server and has its own URL.' },
+    { t: 'Building a small website', site: 'mysite.com',
+      x: 'A website is a collection of related web pages that share one domain name. All the pages are stored on the same web server and are joined by hyperlinks.' },
+    { t: 'How web browsers work', site: 'techbooks.com',
+      x: 'A web browser is application software that requests web pages from servers reads the HTML and renders the page on the screen. Chrome Firefox and Edge are web browsers.' },
+    { t: 'Reading a URL', site: 'learnweb.com',
+      x: 'A URL is the unique address of a resource on the web. A URL has a protocol a domain name a path and a file name.' },
+    { t: 'How search engines work', site: 'techbooks.com',
+      x: 'A search engine uses crawlers to collect web pages and builds an index of the words. When you search it lists the most relevant results first.' },
+    { t: 'The home page of a website', site: 'school.edu.pk',
+      x: 'The home page is the main page of a website usually index.html. It opens when the domain name is entered and links to every other page of the site.' },
+    { t: 'Web hosting explained', site: 'techbooks.com',
+      x: 'Web hosting is a service that stores the files of a website on a web server that stays online 24 hours a day so anyone can visit the site.' },
+    { t: 'Web servers and HTTP status codes', site: 'learnweb.com',
+      x: 'A web server stores web pages and sends them to browsers over HTTP. It answers every request with a status code such as 200 404 or 500. A live web server runs all day.' }
+  ];
+
+  var INDEX = null;        /* term -> {tf per doc} */
+  var DF = null;           /* term -> number of docs */
+  var N = 0;
+
+  function tokenize(s){
+    return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').split(' ')
+      .filter(function(w){ return w.length > 1; });
+  }
+  function listDocs(){
+    docList.innerHTML = DOCS.map(function(d, i){
+      return '<div class="doc" id="doc' + i + '"><b>' + esc(d.t) + '</b>' +
+        '<small>' + esc(d.site) + ' · ' + tokenize(d.t + ' ' + d.x).length + ' words</small>' +
+        '<span class="tick" id="tick' + i + '"></span></div>';
+    }).join('');
+  }
+  function setStats(){
+    var terms = INDEX ? Object.keys(INDEX).length : 0;
+    $('#stDocs').textContent = INDEX ? N : 0;
+    $('#stTerms').textContent = terms;
+    var post = 0;
+    if(INDEX){ Object.keys(INDEX).forEach(function(t){ post += Object.keys(INDEX[t]).length; }); }
+    $('#stPost').textContent = post;
+  }
+  function buildIndex(){
+    INDEX = {}; DF = {}; N = DOCS.length;
+    DOCS.forEach(function(d, i){
+      var toks = tokenize(d.t + ' ' + d.x);
+      var seen = {};
+      toks.forEach(function(w){
+        if(!INDEX[w]){ INDEX[w] = {}; }
+        INDEX[w][i] = (INDEX[w][i] || 0) + 1;
+        seen[w] = 1;
+      });
+      Object.keys(seen).forEach(function(w){ DF[w] = (DF[w] || 0) + 1; });
+    });
+    setStats();
+  }
+
+  function crawl(){
+    listDocs();
+    INDEX = null; DF = null; N = 0; setStats();
+    results.innerHTML = '<div class="empty">Crawling… watch the pages go green.</div>';
+    crawlBtn.disabled = true;
+    var i = 0;
+    (function step(){
+      if(i >= DOCS.length){
+        buildIndex();
+        crawlBtn.disabled = false;
+        crawlBtn.textContent = 'Crawl again';
+        results.innerHTML = '<div class="empty" style="border-color:#2f7d63;color:#b7f2d6;background:rgba(52,211,153,.08)">' +
+          'Index built: <b>' + Object.keys(INDEX).length + '</b> unique words from <b>' + N + '</b> pages. Now search something.</div>';
+        return;
+      }
+      var el = document.getElementById('doc' + i);
+      var tick = document.getElementById('tick' + i);
+      if(el){ el.classList.add('crawled'); }
+      if(tick){ tick.textContent = '✔ crawled'; }
+      i++;
+      setTimeout(function(){ safe('crawl-step', step); }, 170);
+    })();
+  }
+
+  function search(q){
+    if(!INDEX){
+      results.innerHTML = '<div class="empty">Press <b>Crawl 9 pages</b> first — a search engine can only search its own index.</div>';
+      return;
+    }
+    var terms = tokenize(q);
+    if(!terms.length){
+      results.innerHTML = '<div class="empty">Type a word first.</div>';
+      return;
+    }
+    var scores = {}, hits = {};
+    terms.forEach(function(t){
+      var postings = INDEX[t];
+      if(!postings){ return; }
+      var df = DF[t] || 1;
+      var idf = Math.log(1 + (N / df));
+      Object.keys(postings).forEach(function(docId){
+        var tf = postings[docId];
+        var s = (1 + Math.log(tf)) * idf;
+        scores[docId] = (scores[docId] || 0) + s;
+        (hits[docId] || (hits[docId] = [])).push(t);
+      });
+    });
+    var ranked = Object.keys(scores).map(function(id){
+      return { id: parseInt(id, 10), score: scores[id], words: hits[id] };
+    }).sort(function(a, b){ return b.score - a.score; });
+
+    var missing = terms.filter(function(t){ return !INDEX[t]; });
+    if(!ranked.length){
+      results.innerHTML = '<div class="empty"><b>0 results</b> for "' + esc(q) + '".<br>' +
+        'No page in the index contains ' + (missing.length ? '"' + esc(missing.join(', ')) + '"' : 'that') +
+        '. This is not an error — it is simply <b>zero results</b>.</div>';
+      return;
+    }
+    var top = ranked[0].score || 1;
+    results.innerHTML = '<div class="tiny muted" style="margin-bottom:2px">' + ranked.length +
+      ' result' + (ranked.length === 1 ? '' : 's') + ' for "' + esc(q) + '" — highest score first' +
+      (missing.length ? ' · not in any page: ' + esc(missing.join(', ')) : '') + '</div>' +
+      ranked.map(function(r, i){
+        var d = DOCS[r.id];
+        var pct = Math.max(6, Math.round((r.score / top) * 100));
+        return '<div class="result">' +
+          '<div class="rrow"><span class="rank">#' + (i + 1) + '</span>' +
+          '<span class="rtitle">' + esc(d.t) + '</span></div>' +
+          '<div class="rsnip">' + esc(d.x.slice(0, 108)) + '…</div>' +
+          '<div class="rrow"><span class="mono-sm muted" style="font-size:.68rem">' + esc(d.site) + '</span>' +
+          '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+          '<span class="score">' + r.score.toFixed(2) + '</span></div>' +
+          '<div class="rrow" style="margin-top:4px">' + r.words.map(function(w){
+            return '<span class="mchip">' + esc(w) + '</span>';
+          }).join(' ') + '</div>' +
+        '</div>';
+      }).join('');
+  }
+
+  on(crawlBtn, 'click', function(){ safe('crawl', crawl); });
+  on($('#crawlReset'), 'click', function(){
+    INDEX = null; DF = null; N = 0;
+    listDocs(); setStats();
+    results.innerHTML = '<div class="empty">Index cleared. A search engine with no index finds nothing.</div>';
+    if(crawlBtn){ crawlBtn.disabled = false; crawlBtn.textContent = 'Crawl 9 pages'; }
+  });
+  on($('#qGo'), 'click', function(){ safe('search', function(){ search(qIn.value); }); });
+  on(qIn, 'keydown', function(ev){
+    if(ev.key === 'Enter'){ ev.preventDefault(); safe('search', function(){ search(qIn.value); }); }
+  });
+  $$('.chip[data-q]').forEach(function(c){
+    on(c, 'click', function(){
+      qIn.value = c.getAttribute('data-q');
+      safe('search', function(){ search(qIn.value); });
+    });
+  });
+
+  listDocs();
+  setStats();
+});
+
+/* ============================================================
+   SLIDE 8 · HOME PAGE  ·  type a domain, get the home page
+   ============================================================ */
+safe('home-page', function(){
+  var box = $('#hpSite'), addr = $('#hpAddr'), note = $('#hpNote');
+  if(!box){ return; }
+  var host = 'school.edu.pk';
+  var path = '/index.html';
+
+  function render(){
+    var r = siteHTML(host, path, { chrome: true });
+    if(r){
+      box.innerHTML = r.html;
+      note.innerHTML = 'You typed only the <b>domain name</b>' +
+        (path === '/index.html' ? ' — and the server sent <code>index.html</code>, the home page.' : ' then followed a link.') +
+        (host === 'mysite.com' ? ' In the Browser Lab, mysite.com only works after you upload it in the <b>Web Hosting</b> slide.' : '');
+    }
+  }
+  function openDomain(text){
+    var raw = String(text || '').trim().toLowerCase()
+      .replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
+    if(!raw){ return; }
+    if(SITES[raw]){
+      host = raw; path = '/index.html';
+      addr.value = host;
+      render();
+    }else{
+      note.innerHTML = '<span class="bad2"><b>"' + esc(raw) + '" is not one of the demo websites.</b></span> ' +
+        'Try school.edu.pk, techbooks.com, learnweb.com or mysite.com.';
+    }
+  }
+
+  on(box, 'click', function(ev){
+    var b = ev.target.closest('[data-link]');
+    if(b){ ev.preventDefault(); path = b.getAttribute('data-link'); render(); }
+  });
+  on($('#hpGo'), 'click', function(){ safe('hp-open', function(){ openDomain(addr.value); }); });
+  on(addr, 'keydown', function(ev){
+    if(ev.key === 'Enter'){ ev.preventDefault(); safe('hp-open', function(){ openDomain(addr.value); }); }
+  });
+  $$('.chip[data-hp]').forEach(function(c){
+    on(c, 'click', function(){
+      addr.value = c.getAttribute('data-hp');
+      safe('hp-open', function(){ openDomain(addr.value); });
+    });
+  });
+  render();
+});
+
+/* ============================================================
+   SLIDE 9 · WEB HOSTING  ·  upload → live → open in the lab
+   ============================================================ */
+safe('web-hosting', function(){
+  var upBtn = $('#upBtn'), pill = $('#hostPill'), liveBox = $('#liveBox');
+  var rack = $('#rack'), files = $$('#hostFiles .file');
+  if(!upBtn || !rack){ return; }
+
+  function led(i, cls){
+    var l = $('[data-led="' + i + '"]', rack);
+    if(!l){ return; }
+    l.classList.remove('on', 'busy');
+    if(cls){ l.classList.add(cls); }
+  }
+
+  var busy = false;
+  function upload(){
+    if(busy){ return; }
+    busy = true;
+    STATE.mysiteLive = false;
+    liveBox.classList.remove('on');
+    pill.textContent = 'status: uploading…';
+    upBtn.disabled = true;
+    /* clear any old server rows */
+    $$('.rackrow[data-arrived]', rack).forEach(function(r){ r.parentNode.removeChild(r); });
+    var note0 = $('#hostLocalNote');
+    if(note0){ note0.innerHTML = 'Copying the files to the hosting server…'; }
+    files.forEach(function(f){
+      f.classList.remove('arrived');
+      f.classList.remove('going');
+      f.style.display = '';
+    });
+    led(3, 'busy');
+
+    var i = 0;
+    (function step(){
+      if(i >= files.length){
+        led(3, 'on'); led(0, 'on'); led(1, 'on'); led(2, 'on');
+        STATE.mysiteLive = true;
+        liveBox.classList.add('on');
+        pill.textContent = 'status: live · 24/7';
+        upBtn.disabled = false;
+        upBtn.textContent = '⇧ Re-upload website';
+        busy = false;
+        var r = $('#hostLocalNote');
+        if(r){ r.innerHTML = '<span class="ok">✔ Uploaded.</span> The server now has a copy of all 4 files. Your own computer can even be switched off — the site stays online.'; }
+        return;
+      }
+      var f = files[i];
+      var name = f.getAttribute('data-f');
+      f.classList.add('going');
+      led(0, 'busy');
+      setTimeout(function(){
+        f.classList.remove('going');
+        f.classList.add('arrived');
+        var row = document.createElement('div');
+        row.className = 'rackrow';
+        row.setAttribute('data-arrived', '1');
+        row.innerHTML = '<span class="led on"></span> file · /public_html/' + esc(name);
+        rack.appendChild(row);
+        led(0, 'on');
+        led(1, 'busy');
+        setTimeout(function(){ led(1, 'on'); }, 220);
+      }, 430);
+      i++;
+      setTimeout(function(){ safe('upload-step', step); }, 520);
+    })();
+  }
+
+  on(upBtn, 'click', function(){ safe('upload', upload); });
+  on($('#openLab'), 'click', function(){
+    goTo(11);
+    safe('lab-open-from-hosting', function(){ LABAPI.open('mysite.com'); });
+  });
+});
+
+/* ============================================================
+   SLIDE 10 · WEB SERVER  ·  real request/response headers
+   ============================================================ */
+safe('web-server', function(){
+  var reqBox = $('#reqBox'), resBox = $('#resBox'), logBox = $('#srvLog');
+  var packet = $('#packet'), statusTag = $('#srvStatus');
+  if(!reqBox || !resBox){ return; }
+
+  var ROUTES = {
+    '/index.html':  { code: 200, text: 'OK', type: 'text/html; charset=UTF-8', len: '4127',
+      note: 'The file exists. The server sends it with status 200 OK.' },
+    '/missing.html':{ code: 404, text: 'Not Found', type: 'text/html; charset=UTF-8', len: '318',
+      note: 'No such file in /public_html. The server still answers — with 404 Not Found.' },
+    '/old-page':    { code: 301, text: 'Moved Permanently', type: 'text/html', len: '0', loc: '/new-page.html',
+      note: 'The page moved. 301 tells the browser (and Google) the new address in the Location header.' },
+    '/crash':       { code: 500, text: 'Internal Server Error', type: 'text/html; charset=UTF-8', len: '502',
+      note: 'The server itself failed (a bug, or the database is down). Nothing to do with your URL.' }
+  };
+
+  function cls(code){ return 'g' + code; }
+  function logLine(code, path){
+    var d = document.createElement('div');
+    var c = code >= 500 ? 'c5' : code >= 400 ? 'c4' : code >= 300 ? 'c3' : 'c2';
+    d.innerHTML = '<span class="' + c + '">[' + new Date().toLocaleTimeString() + '] ' + code + ' ' +
+      esc((ROUTES[path] || {}).text || '') + '</span>  GET ' + esc(path) + '  ·  ' + Math.floor(400 + Math.random() * 5000) + ' bytes';
+    logBox.appendChild(d);
+    logBox.scrollTop = logBox.scrollHeight;
+  }
+
+  var inflight = false;
+  function request(path){
+    if(inflight){ return; }
+    var r = ROUTES[path];
+    if(!r){ return; }
+    inflight = true;
+
+    reqBox.innerHTML =
+      '<span class="hl">GET ' + esc(path) + ' HTTP/1.1</span>\n' +
+      'Host: www.school.edu.pk\n' +
+      'User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:121.0) Gecko/20100101 Firefox/121.0\n' +
+      'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\n' +
+      'Accept-Language: en-PK,en;q=0.9,ur;q=0.8\n' +
+      'Accept-Encoding: gzip, deflate, br\n' +
+      'Connection: keep-alive';
+
+    resBox.innerHTML = '<span class="muted">… waiting for the server</span>';
+    statusTag.className = 'statustag';
+    statusTag.textContent = 'request sent…';
+
+    packet.textContent = 'GET ' + path;
+    packet.className = 'pk';
+    packet.style.left = '8%';
+    setTimeout(function(){ packet.style.left = '92%'; }, 40);
+
+    setTimeout(function(){
+      var dateStr = new Date().toUTCString();
+      var head = 'HTTP/1.1 ' + r.code + ' ' + r.text + '\n' +
+        'Date: ' + dateStr + '\n' +
+        'Server: Apache/2.4.58 (Ubuntu)\n' +
+        'Content-Type: ' + r.type + '\n' +
+        'Content-Length: ' + r.len + '\n' +
+        (r.loc ? 'Location: ' + r.loc + '\n' : '') +
+        'Cache-Control: max-age=3600\n' +
+        'X-Powered-By: Class-9-Demo\n' +
+        'Connection: ' + (r.code === 500 ? 'close' : 'keep-alive');
+      var stCls = r.code === 200 ? 'st200' : r.code === 301 ? 'st301' : 'st404';
+      var firstLine = 'HTTP/1.1 <span class="' + stCls + '">' + r.code + ' ' + r.text + '</span>';
+      var rest = head.split('\n').slice(1).join('\n');
+      resBox.innerHTML = firstLine + '\n' + esc(rest);
+
+      packet.className = 'pk back';
+      packet.textContent = r.code + ' ' + r.text;
+      packet.style.left = '8%';
+
+      statusTag.className = 'statustag ' + cls(r.code);
+      statusTag.textContent = r.code + ' ' + r.text;
+      logLine(r.code, path);
+      inflight = false;
+    }, 950);
+
+    setTimeout(function(){ packet.style.left = '92%'; }, 60);
+  }
+
+  var reqBtns = $$('[data-req]');
+  function markReq(active){
+    reqBtns.forEach(function(x){ x.classList.toggle('activeReq', x === active); });
+  }
+  reqBtns.forEach(function(b){
+    on(b, 'click', function(){
+      markReq(b);
+      safe('http-request', function(){ request(b.getAttribute('data-req')); });
+    });
+  });
+  if(reqBtns.length){ markReq(reqBtns[0]); }
+});
+
+/* ============================================================
+   SLIDE 11 · BROWSER LAB  ·  DNS error vs 404, history, source
+   ============================================================ */
+safe('browser-lab', function(){
+  var page = $('#labPage'), addr = $('#labAddr'), statusEl = $('#labStatus'), srcEl = $('#labSource');
+  if(!page || !addr){ return; }
+
+  var stack = [], pos = -1, showingSrc = false;
+
+  function resolve(text){
+    var raw = String(text || '').trim();
+    if(!raw){ return null; }
+    var cand = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : ('https://' + raw.replace(/^\/+/, ''));
+    var u = null;
+    try{ u = new URL(cand); }catch(e){ u = null; }
+    if(!u || !u.hostname){ return null; }
+    var host = u.hostname.toLowerCase();
+    var path = u.pathname || '/';
+    if(path === '/' || path === ''){ path = '/index.html'; }
+    return { host: host, path: path, disp: 'https://' + host + (u.pathname === '/' || !u.pathname ? '/' : path) };
+  }
+  function lookupHost(host){
+    if(SITES[host]){ return host; }
+    var bare = host.replace(/^www\./, '');
+    if(SITES[bare]){ return bare; }
+    return null;
+  }
+
+  function errHTML(kind, e){
+    if(kind === 'dns'){
+      return '<div class="errpage"><div class="big dns">DNS</div>' +
+        '<p><b>' + esc(e.host) + '</b> cannot be found. The domain name does not exist, so the browser could not find <i>any</i> server to talk to.</p>' +
+        '<p class="mono-sm" style="color:#7a3fb3">ERR_NAME_NOT_RESOLVED</p>' +
+        '<p class="small">A <b>DNS error</b> happens before any page is requested. No server answered, so there is no HTTP status code at all.</p>' +
+        '<p><button class="slink" data-lab="school.edu.pk">← Go to a domain that exists</button></p></div>';
+    }
+    if(kind === 'notlive'){
+      return '<div class="errpage"><div class="big">404</div>' +
+        '<p><b>mysite.com</b> is not hosted yet. The files are still on your own computer, so the hosting server has nothing to send.</p>' +
+        '<p class="mono-sm">HTTP/1.1 404 Not Found · Server: hosting-demo</p>' +
+        '<p><button class="slink" data-go="9">Go to the Web Hosting slide and upload it →</button></p></div>';
+    }
+    return '<div class="errpage"><div class="big">404</div>' +
+      '<p>DNS worked — <b>' + esc(e.host) + '</b> was found and its server answered. But there is no file called ' +
+      '<code>' + esc(e.path) + '</code> on it.</p>' +
+      '<p class="mono-sm">HTTP/1.1 404 Not Found</p>' +
+      '<p><b>404 = server found, file missing.</b> Compare that with a DNS error, where the server itself was never found.</p>' +
+      '<p><button class="slink" data-lab="' + esc(e.host) + '">← Back to the home page</button></p></div>';
+  }
+
+  function paint(){
+    var e = stack[pos];
+    if(!e){ return; }
+    var realHost = lookupHost(e.host);
+    var kind = 'page', html = '', source = '';
+    if(!realHost){
+      kind = 'dns'; html = errHTML('dns', e); source = cmt('DNS lookup failed: ' + e.host);
+    }else if(realHost === 'mysite.com' && !STATE.mysiteLive){
+      kind = 'notlive'; html = errHTML('notlive', e); source = cmt('mysite.com is not hosted yet');
+    }else if(!SITES[realHost].pages[e.path]){
+      kind = '404'; html = errHTML('404', e);
+      source = cmt('404 Not Found: ' + e.path + ' on ' + realHost);
+    }else{
+      var r = siteHTML(realHost, e.path, { chrome: false });
+      html = r ? r.html : '';
+      source = sourceOf(realHost, e.path);
+    }
+    page.innerHTML = html;
+    page.style.opacity = showingSrc ? '.30' : '1';
+    srcEl.innerHTML = colourise(source);
+    srcEl.style.display = showingSrc ? 'block' : 'none';
+    addr.value = 'https://' + e.host + (e.path === '/index.html' ? '/' : e.path);
+
+    var histTxt = 'history ' + (pos + 1) + '/' + stack.length;
+    if(kind === 'dns'){
+      statusEl.innerHTML = '<b>DNS lookup failed.</b> ' + esc(e.host) + ' does not exist → no server → no HTTP request at all. <span class="muted">(' + histTxt + ')</span>';
+    }else if(kind === 'notlive'){
+      statusEl.innerHTML = '<b>HTTP/1.1 404 Not Found</b> — mysite.com has no uploaded files yet. Upload it on slide 9, then press ⟳. <span class="muted">(' + histTxt + ')</span>';
+    }else if(kind === '404'){
+      statusEl.innerHTML = '<b>HTTP/1.1 404 Not Found</b> — server found, file <code>' + esc(e.path) + '</code> missing. <span class="muted">(' + histTxt + ')</span>';
+    }else{
+      statusEl.innerHTML = 'DNS ok → <b>HTTP/1.1 200 OK</b> → rendered <b>' + esc(e.path) + '</b> from ' + esc(realHost) +
+        ' → ' + Object.keys(SITES[realHost].pages).length + ' pages on this website. <span class="muted">(' + histTxt + ')</span>';
+    }
+  }
+
+  function navigate(text, push){
+    var e = resolve(text);
+    if(!e){
+      statusEl.innerHTML = '<span class="bad2">That is not a URL. Try school.edu.pk or techbooks.com/books.html</span>';
+      return;
+    }
+    if(push !== false){
+      stack = stack.slice(0, pos + 1);
+      stack.push(e);
+      pos = stack.length - 1;
+    }else{
+      stack[pos] = e;
+    }
+    showingSrc = false;
+    paint();
+  }
+
+  on($('#labGo'), 'click', function(){ safe('lab-go', function(){ navigate(addr.value); }); });
+  on(addr, 'keydown', function(ev){
+    if(ev.key === 'Enter'){ ev.preventDefault(); safe('lab-go', function(){ navigate(addr.value); }); }
+  });
+  on($('#labBack'), 'click', function(){
+    if(pos > 0){ pos--; showingSrc = false; paint(); }
+    else{ statusEl.innerHTML = '<b>Back:</b> nothing earlier in this session\'s history.'; }
+  });
+  on($('#labFwd'), 'click', function(){
+    if(pos < stack.length - 1){ pos++; showingSrc = false; paint(); }
+    else{ statusEl.innerHTML = '<b>Forward:</b> nothing ahead. Go back first.'; }
+  });
+  on($('#labReload'), 'click', function(){
+    if(pos >= 0){ showingSrc = false; paint(); statusEl.innerHTML = statusEl.innerHTML + ' <b>⟳ reloaded from the server.</b>'; }
+  });
+  on($('#labHome'), 'click', function(){ safe('lab-home', function(){ navigate('school.edu.pk'); }); });
+  on($('#labSrc'), 'click', function(){
+    showingSrc = !showingSrc;
+    $('#labSrc').classList.toggle('on', showingSrc);
+    paint();
+  });
+
+  on(page, 'click', function(ev){
+    var link = ev.target.closest('[data-link]');
+    var labBtn = ev.target.closest('[data-lab]');
+    if(link){
+      ev.preventDefault();
+      var e = stack[pos];
+      if(!e){ return; }
+      var host = lookupHost(e.host) || e.host;
+      safe('lab-link', function(){ navigate(host + link.getAttribute('data-link')); });
+      return;
+    }
+    if(labBtn){
+      ev.preventDefault();
+      safe('lab-chip', function(){ navigate(labBtn.getAttribute('data-lab')); });
+    }
+  });
+
+  $$('.chip[data-lab]').forEach(function(c){
+    on(c, 'click', function(){ safe('lab-chip', function(){ navigate(c.getAttribute('data-lab')); }); });
+  });
+
+  LABAPI.open = function(url){
+    safe('labapi-open', function(){
+      navigate(url);
+    });
+  };
+
+  navigate('school.edu.pk');
+});
+
+/* ============================================================
+   SLIDE 12 · QUIZ  ·  10 questions, instant explanation
+   ============================================================ */
+safe('quiz', function(){
+  var wrap = $('#quizWrap');
+  if(!wrap){ return; }
+
+  var QS = [
+    { q: 'What is the World Wide Web?',
+      o: ['The cables, routers and satellites that connect computers',
+          'A worldwide collection of interlinked web pages stored on web servers and accessed through the internet using a web browser',
+          'A program that searches an index of web pages',
+          'The software that draws HTML on the screen'],
+      a: 1,
+      w: 'That is the exam definition word for word. Option A describes the <b>internet</b> (the hardware), not the web.',
+      term: 'World Wide Web', slide: 2 },
+
+    { q: 'A school website has Home, About Us, Academics and Contact pages. Which statement is correct?',
+      o: ['Each page is a separate website',
+          'It is one website made of four web pages',
+          'It is four URLs but no domain name',
+          'It is a search engine with four pages'],
+      a: 1,
+      w: 'Related pages + one domain name + one server = <b>one website</b>. Each page is a separate <b>web page</b> file.',
+      term: 'Website', slide: 4 },
+
+    { q: 'Which one is a web browser?',
+      o: ['Google', 'Apache', 'Firefox', 'index.html'],
+      a: 2,
+      w: 'Firefox is a <b>browser</b> (application software). Google is a search engine, Apache is web-server software, index.html is a file name.',
+      term: 'Web Browser', slide: 5 },
+
+    { q: 'In <span class="mono-sm">https://school.edu.pk/exams/result.html</span>, what does <code>https</code> tell you?',
+      o: ['The domain name of the server', 'The protocol used to fetch the page',
+         'The folder where the file is stored', 'The file name'],
+      a: 1,
+      w: '<code>https</code> is the <b>protocol</b> (how to talk to the server). <code>school.edu.pk</code> is the domain, <code>/exams/</code> is the path and <code>result.html</code> is the file name.',
+      term: 'URL (Uniform Resource Locator)', slide: 6 },
+
+    { q: 'In what order does a search engine work?',
+      o: ['Rank → crawl → index', 'Crawl → index → rank', 'Index → rank → crawl', 'Search the live internet each time'],
+      a: 1,
+      w: 'A crawler <b>collects</b> pages, the engine builds an <b>index</b> of words, then <b>ranks</b> results by relevance. It never searches the whole internet live.',
+      term: 'Search Engine', slide: 7 },
+
+    { q: 'Which file name do web servers look for by default, when no file name is given in the URL?',
+      o: ['home.html', 'main.html', 'index.html', 'start.html'],
+      a: 2,
+      w: '<b>index.html</b> is the default file — that is why typing only the domain name opens the <b>home page</b>.',
+      term: 'Home Page', slide: 8 },
+
+    { q: 'What exactly is web hosting?',
+      o: ['The computer that stores the website files',
+          'A service that stores a site\'s files on a server that stays online 24 hours a day',
+          'The software that renders HTML',
+          'Another name for a domain name'],
+      a: 1,
+      w: 'The <b>web server</b> is the machine; <b>web hosting</b> is the paid <b>service</b> that keeps your files on such a machine, online 24/7.',
+      term: 'Web Hosting', slide: 9 },
+
+    { q: 'A browser shows <b>404 Not Found</b>. What does it mean?',
+      o: ['The domain name does not exist',
+          'The server was found, but the requested file is not on it',
+          'The server crashed',
+          'The internet connection is down'],
+      a: 1,
+      w: '<b>404</b> = server found (<b>DNS worked</b>), file missing. If the domain did not exist you would get a <b>DNS error</b> instead, with no status code at all.',
+      term: 'Web Server', slide: 11 },
+
+    { q: 'The browser returns status <b>500 Internal Server Error</b>. Who has the problem?',
+      o: ['Your keyboard', 'The website\'s server', 'The domain name registry', 'Your ISP\'s cable'],
+      a: 1,
+      w: '<b>5xx</b> codes are the server\'s fault (a bug or a crashed service). <b>4xx</b> codes are about the request (404 = missing file).',
+      term: 'Web Server', slide: 10 },
+
+    { q: 'Which statement is TRUE?',
+      o: ['The web and the internet are the same thing',
+          'The web is a service that runs on top of the internet',
+          'A web page and a website are the same thing',
+          'A web server and a hosting service are the same thing'],
+      a: 1,
+      w: 'All three traps in one question: <b>web ≠ internet</b>, <b>page ≠ site</b>, <b>server ≠ hosting service</b>.',
+      term: 'World Wide Web', slide: 1 }
+  ];
+
+  var qi = 0, score = 0, answered = [], wrongTerms = [];
+
+  function dotsHTML(){
+    var out = '';
+    for(var i = 0; i < QS.length; i++){
+      var cls = '';
+      if(i < answered.length){ cls = answered[i] ? 'right' : 'wrong'; }
+      else if(i === qi){ cls = 'cur'; }
+      out += '<i class="' + cls + '"></i>';
+    }
+    return out;
+  }
+
+  function renderQ(){
+    var Q = QS[qi];
+    var html = '<div class="qmeta"><div class="qdots">' + dotsHTML() + '</div>' +
+      '<span class="pill ghost">score ' + score + ' / ' + answered.length + '</span></div>' +
+      '<div class="qcard"><div class="qtext">Q' + (qi + 1) + '. ' + Q.q + '</div>';
+    Q.o.forEach(function(opt, i){
+      html += '<button class="qopt" data-opt="' + i + '"><span class="l">' + 'ABCD'.charAt(i) + '</span>' + opt + '</button>';
+    });
+    html += '<div class="qexplain" id="qExp"></div>' +
+      '<div class="row" style="margin-top:10px"><button class="btn primary" id="qNext" style="display:none">' +
+      (qi === QS.length - 1 ? 'See my result →' : 'Next question →') + '</button></div></div>';
+    wrap.innerHTML = html;
+  }
+
+  function choose(idx){
+    if(answered.length > qi){ return; }        /* already answered */
+    var Q = QS[qi];
+    var ok = (idx === Q.a);
+    answered[qi] = ok;
+    if(ok){ score++; } else { wrongTerms.push({ term: Q.term, slide: Q.slide }); }
+    $$('.qopt', wrap).forEach(function(b, i){
+      b.disabled = true;
+      if(i === Q.a){ b.classList.add('right'); }
+      if(i === idx && !ok){ b.classList.add('wrong'); }
+    });
+    var exp = $('#qExp');
+    exp.classList.add('on');
+    if(!ok){ exp.classList.add('bad'); }
+    exp.innerHTML = (ok ? '<b class="ok">Correct ✔</b> ' : '<b class="bad2">Not quite ✘</b> ') + Q.w;
+    var nb = $('#qNext');
+    if(nb){ nb.style.display = 'inline-flex'; }
+    var meta = $('.qmeta .pill', wrap);
+    if(meta){ meta.textContent = 'score ' + score + ' / ' + answered.length; }
+    var d = $('.qdots', wrap);
+    if(d){ d.innerHTML = dotsHTML(); }
+  }
+
+  function finish(){
+    var pct = Math.round((score / QS.length) * 100);
+    var msg = pct === 100 ? 'Full marks. You are ready for the paper.' :
+              pct >= 70 ? 'Good. Read the terms you missed once more and you are done.' :
+              pct >= 40 ? 'Half way. Go back to the slides listed below.' :
+                          'Do not worry — read the revision sheet, then try again.';
+    var seen = {}, list = '';
+    wrongTerms.forEach(function(w){
+      if(seen[w.slide]){ return; }
+      seen[w.slide] = 1;
+      list += '<div><b>' + esc(w.term) + '</b> — <button class="slink" data-go="' + w.slide + '" style="color:#8b7cf6">open slide ' +
+        (w.slide) + '</button></div>';
+    });
+    wrap.innerHTML = '<div class="qcard"><div class="qmeta"><div class="qdots">' + dotsHTML() + '</div></div>' +
+      '<h3>Your result</h3>' +
+      '<p class="scorebig gradtxt">' + score + ' / ' + QS.length + '</p>' +
+      '<p class="muted tiny">' + pct + '% · ' + msg + '</p>' +
+      (list ? '<div class="paneLabel">Terms to revise</div><div class="revisit">' + list + '</div>'
+            : '<p class="ok tiny"><b>Nothing to revise — every term answered correctly.</b></p>') +
+      '<div class="row" style="margin-top:12px">' +
+      '<button class="btn primary" id="qAgain">Try again</button>' +
+      '<button class="btn" data-go="13">Revision sheet</button></div></div>';
+  }
+
+  wrap.addEventListener('click', function(ev){
+    var t = ev.target;
+    if(!t || !t.closest){ return; }
+    var opt = t.closest('[data-opt]');
+    if(opt){ ev.preventDefault(); safe('quiz-choose', function(){ choose(parseInt(opt.getAttribute('data-opt'), 10)); }); return; }
+    if(t.closest('#qNext')){
+      ev.preventDefault();
+      safe('quiz-next', function(){
+        if(qi < QS.length - 1){ qi++; renderQ(); }
+        else{ finish(); }
+      });
+      return;
+    }
+    if(t.closest('#qAgain')){
+      ev.preventDefault();
+      safe('quiz-restart', function(){
+        qi = 0; score = 0; answered = []; wrongTerms = [];
+        renderQ();
+      });
+    }
+  });
+
+  renderQ();
+});
+
+/* ============================================================
+   SLIDE 13 · REVISION SHEET + MATCH GAME
+   ============================================================ */
+safe('revision-sheet', function(){
+  var defList = $('#defList');
+  if(defList){
+    defList.innerHTML = DEFS.map(function(d, i){
+      return '<div class="defitem"><span class="n">' + (i + 1) + '</span><div><b>' + esc(d.term) + '</b><br>' +
+        '<span>' + esc(d.def) + '</span></div></div>';
+    }).join('');
+  }
+
+  var SHORT = [
+    { term: 'World Wide Web', m: 'All the interlinked pages on the internet, opened in a browser' },
+    { term: 'Web Page', m: 'One HTML document with its own URL' },
+    { term: 'Website', m: 'Related pages under one domain name on one server' },
+    { term: 'Web Browser', m: 'Software that requests pages and renders the HTML' },
+    { term: 'URL', m: 'Address = protocol + domain + path + file name' },
+    { term: 'Search Engine', m: 'Searches a crawler-built index, best match first' },
+    { term: 'Home Page', m: 'First page of a site, usually index.html' },
+    { term: 'Web Hosting', m: 'Service that keeps a site online 24 hours a day' },
+    { term: 'Web Server', m: 'Computer that sends pages over HTTP with a status code' }
+  ];
+
+  var leftCol = $('#mLeft'), rightCol = $('#mRight');
+  if(!leftCol || !rightCol){ return; }
+
+  var left = [], right = [], selLeft = null, done = {}, att = 0, ok = 0;
+
+  function shuffle(a){
+    var arr = a.slice();
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+  function stats(){
+    $('#mAtt').textContent = att;
+    $('#mOk').textContent = ok;
+    $('#mAcc').textContent = att ? Math.round((ok / att) * 100) + '%' : '—';
+    var pairs = Object.keys(done).length;
+    $('#mPairs').textContent = pairs + '/9';
+    $('#mDone').style.display = pairs === 9 ? 'block' : 'none';
+  }
+  function paint(){
+    leftCol.innerHTML = left.map(function(item){
+      var cls = 'mbtn' + (done[item.term] ? ' done' : '') + (selLeft === item.term ? ' sel' : '');
+      return '<button class="' + cls + '" data-side="l" data-k="' + esc(item.term) + '">' + esc(item.term) + '</button>';
+    }).join('');
+    rightCol.innerHTML = right.map(function(item){
+      var owner = null;
+      Object.keys(done).forEach(function(k){ if(done[k] === item.m){ owner = k; } });
+      var cls = 'mbtn' + (owner ? ' done' : '');
+      return '<button class="' + cls + '" data-side="r" data-k="' + esc(item.m) + '">' + esc(item.m) +
+        (owner ? ' <span class="ok">✔ ' + esc(owner) + '</span>' : '') + '</button>';
+    }).join('');
+    stats();
+  }
+  function reset(){
+    left = shuffle(SHORT);
+    right = shuffle(SHORT);
+    selLeft = null; done = {}; att = 0; ok = 0;
+    paint();
+  }
+
+  function clickLeft(term){
+    if(done[term]){ return; }
+    selLeft = (selLeft === term) ? null : term;
+    paint();
+  }
+  function clickRight(meaning){
+    var owner = null;
+    Object.keys(done).forEach(function(k){ if(done[k] === meaning){ owner = k; } });
+    if(owner){ return; }
+    if(!selLeft){ paint(); return; }
+    att++;
+    var pair = null;
+    SHORT.forEach(function(s){ if(s.term === selLeft){ pair = s; } });
+    if(pair && pair.m === meaning){
+      ok++;
+      done[selLeft] = meaning;
+      selLeft = null;
+      paint();
+    }else{
+      paint();
+      var btn = $$('[data-side="r"]', rightCol).filter(function(b){ return b.getAttribute('data-k') === meaning; })[0];
+      if(btn){ btn.classList.add('shake'); setTimeout(function(){ btn.classList.remove('shake'); }, 320); }
+      var lbtn = $$('[data-side="l"]', leftCol).filter(function(b){ return b.getAttribute('data-k') === selLeft; })[0];
+      if(lbtn){ lbtn.classList.add('shake'); setTimeout(function(){ lbtn.classList.remove('shake'); }, 320); }
+      stats();
+    }
+  }
+
+  leftCol.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-side="l"]');
+    if(b){ ev.preventDefault(); safe('match-left', function(){ clickLeft(b.getAttribute('data-k')); }); }
+  });
+  rightCol.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-side="r"]');
+    if(b){ ev.preventDefault(); safe('match-right', function(){ clickRight(b.getAttribute('data-k')); }); }
+  });
+  on($('#mReset'), 'click', function(){ safe('match-reset', reset); });
+
+  reset();
+});
+
+/* ============================================================
+   6) BOOT  ·  wire the slide list, dots and status badge
+   ============================================================ */
+safe('boot', function(){
+  slides = $$('.slide');
+  if(slides.length){ TOTAL = slides.length; LAST = TOTAL - 1; }
+
+  if(dotsEl){
+    dotsEl.innerHTML = '';
+    dots = [];
+    for(var i = 0; i < TOTAL; i++){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'dotbtn';
+      b.setAttribute('data-go', String(i));
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-label', 'Slide ' + (i + 1));
+      b.title = 'Slide ' + (i + 1);
+      dotsEl.appendChild(b);
+      dots.push(b);
+    }
+  }
+
+  window.__goTo = goTo;            /* handy for manual testing */
+  window.__slides = slides;
+
+  goTo(0);
+
+  if(badgeEl && ERR_N === 0){
+    badgeEl.classList.remove('bad');
+    badgeEl.textContent = 'JS OK · ' + TOTAL + ' slides';
+  }
+});
+
+/* a last safety net: if the browser fires an error later, the badge
+   has already been switched to red by showError(). */
+})();
+</script>
+</body>
+</html>
